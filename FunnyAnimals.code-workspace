@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"name": "FunnyAnimals",
+			"path": "."
+		},
+		{
+			"name": "UE4",
+			"path": "C:\\Program Files\\Epic Games\\UE_4.25"
+		}
+	],
+	"settings": {
+		"typescript.tsc.autoDetect": "off",
+		"files.associations": {
+			"memory": "cpp"
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-dotnettools.csharp"
+		]
+	}
+}
