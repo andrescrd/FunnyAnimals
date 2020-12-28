@@ -26,5 +26,5 @@ public:
 	static class UFGameInstance *GetOwnGameInstance(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable)
-	static class AFGameMode *GetOwnGameMode(const UObject* WorldContextObject);
+	static class AFGameModeGameplay *GetOwnGameMode(const UObject* WorldContextObject);
 };

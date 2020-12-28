@@ -39,7 +39,7 @@ void AFWorm::PossessedBy(AController* NewController)
 		AI->RunBehaviorTree(BehaviorTreeAsset);
 }
 
-void AFWorm::MoveToLocation(FVector NewLocation, bool UpdateVelocity)
+void AFWorm::MoveToLocation(const FVector NewLocation,const bool UpdateVelocity) const
 {
 	if (AAIController* AI = Cast<AAIController>(GetController()))
 	{
@@ -87,7 +87,7 @@ float AFWorm::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 	return DamageAmount;
 }
 
-void AFWorm::PrepareToDestroy(FVector EndLocation)
+void AFWorm::PrepareToDestroy(const FVector EndLocation)
 {
 	if(!HasAuthority())
 		return;

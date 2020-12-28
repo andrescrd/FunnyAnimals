@@ -29,7 +29,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 	
-	void MoveToLocation(FVector NewLocation, bool UpdateVelocity = false);
+	void MoveToLocation(const FVector NewLocation,const bool UpdateVelocity = false) const;
 
 	UFUNCTION()
 	void HandleHearNoise(APawn* OwnInstigator, const FVector& Location, float Volume);
@@ -39,7 +39,7 @@ protected:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
 public:
-	void PrepareToDestroy(FVector EndLocation);
+	void PrepareToDestroy(const FVector EndLocation);
 
 	UFUNCTION(BlueprintCallable)
 	bool GetIsActive() const;

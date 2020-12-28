@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/GameInstance.h"
 #include "World/FGameInstance.h"
-#include "World/FGameMode.h"
+#include "World/FGameModeGameplay.h"
 #include "Types/FTypes.h"
 
 FCharacterColor UFBlueprintFunctionLibrary::GetColorFromDataTable(class UDataTable *Table)
@@ -34,8 +34,8 @@ class UFGameInstance *UFBlueprintFunctionLibrary::GetOwnGameInstance(const UObje
 	return GI != nullptr ? Cast<UFGameInstance>(GI) : nullptr;
 }
 
-class AFGameMode *UFBlueprintFunctionLibrary::GetOwnGameMode(const UObject *WorldContextObject)
+class AFGameModeGameplay *UFBlueprintFunctionLibrary::GetOwnGameMode(const UObject *WorldContextObject)
 {
 	AGameModeBase *GM = UGameplayStatics::GetGameMode(WorldContextObject);
-	return GM != nullptr ? Cast<AFGameMode>(GM) : nullptr;
+	return GM != nullptr ? Cast<AFGameModeGameplay>(GM) : nullptr;
 }

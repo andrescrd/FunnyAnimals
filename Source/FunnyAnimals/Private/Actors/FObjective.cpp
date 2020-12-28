@@ -6,7 +6,7 @@
 #include "Characters/FBird.h"
 #include "Characters/FWorm.h"
 #include "Players/FPlayerState.h"
-#include "World/FGameMode.h"
+#include "World/FGameModeGameplay.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values

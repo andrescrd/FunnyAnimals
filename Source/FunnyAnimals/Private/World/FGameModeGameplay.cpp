@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "World/FGameMode.h"
+#include "World/FGameModeGameplay.h"
 #include "World/FGameState.h"
 #include "Players/FPlayerController.h"
 #include "Players/FPlayerState.h"
@@ -10,7 +10,7 @@
 #include "Suppot/Helpers/FBlueprintFunctionLibrary.h"
 #include "Suppot/Managers/FLevelManager.h"
 
-AFGameMode::AFGameMode()
+AFGameModeGameplay::AFGameModeGameplay()
 {
     CurrentGameState = EGameState::UNKNOW;
     GameStateClass = AFGameState::StaticClass();
@@ -18,19 +18,19 @@ AFGameMode::AFGameMode()
     PlayerStateClass = AFPlayerState::StaticClass();
 }
 
-void AFGameMode::BeginPlay()
+void AFGameModeGameplay::BeginPlay()
 {
     Super::BeginPlay();
 
     SetGameState(EGameState::PREPARING);
 }
 
-EGameState AFGameMode::GetCurrentGameState() const
+EGameState AFGameModeGameplay::GetCurrentGameState() const
 {
     return CurrentGameState;
 }
 
-void AFGameMode::SetGameState(const EGameState NewGameState)
+void AFGameModeGameplay::SetGameState(const EGameState NewGameState)
 {
     if (CurrentGameState == NewGameState)
         return;
@@ -41,7 +41,7 @@ void AFGameMode::SetGameState(const EGameState NewGameState)
     OnGameStateChange(CurrentGameState);
 }
 
-void AFGameMode::Preparing()
+void AFGameModeGameplay::Preparing()
 {
     AFLevelManager *LM = UFBlueprintFunctionLibrary::GetLevelManager(this);
 
@@ -59,10 +59,10 @@ void AFGameMode::Preparing()
     }
 
     FTimerHandle TimerHandle;
-    GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameMode::SetGameState, EGameState::PLAYING), 1.f, false);
+    GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeGameplay::SetGameState, EGameState::PLAYING), 1.f, false);
 }
 
-void AFGameMode::Playing()
+void AFGameModeGameplay::Playing()
 {
     AFLevelManager *LM = UFBlueprintFunctionLibrary::GetLevelManager(this);
 
@@ -71,11 +71,11 @@ void AFGameMode::Playing()
         GS->MulticastOnPlaying();
         GS->SetCounterTime(LM->GetLevel(0).MaxTime);
 
-        GetWorldTimerManager().SetTimer(Counter_TimerHandle, this, &AFGameMode::StartCounter, 1.f, true);
+        GetWorldTimerManager().SetTimer(Counter_TimerHandle, this, &AFGameModeGameplay::StartCounter, 1.f, true);
     }
 }
 
-void AFGameMode::Complete()
+void AFGameModeGameplay::Complete()
 {
     if (AFGameState *GS = GetGameState<AFGameState>())
     {
@@ -84,7 +84,7 @@ void AFGameMode::Complete()
     }
 }
 
-void AFGameMode::StartCounter()
+void AFGameModeGameplay::StartCounter()
 {
     if (AFGameState *GS = GetGameState<AFGameState>())
     {
@@ -100,7 +100,7 @@ void AFGameMode::StartCounter()
     }
 }
 
-void AFGameMode::HandleGameState(const EGameState NewGameState)
+void AFGameModeGameplay::HandleGameState(const EGameState NewGameState)
 {
     switch (NewGameState)
     {

@@ -5,15 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Types/FTypes.h"
-#include "FGameMode.generated.h"
+#include "FGameModeGameplay.generated.h"
 
 UCLASS()
-class FUNNYANIMALS_API AFGameMode : public AGameModeBase
+class FUNNYANIMALS_API AFGameModeGameplay : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	AFGameMode();
+	AFGameModeGameplay();
 
 protected:
 	FTimerHandle Counter_TimerHandle;
