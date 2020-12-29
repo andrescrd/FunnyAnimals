@@ -20,6 +20,9 @@ public:
 protected:
 	class UUserWidget* MainMenuWP;
 	class UFOptionMenuWidget* OptionMenuWP;
+	class UUserWidget* HostMenuWP;
+	class UUserWidget* ServerMenuWP;
+	class UUserWidget* LoadingWP;
 	
 	// Managers
 	UPROPERTY(Transient)
@@ -36,6 +39,14 @@ protected:
 	TSubclassOf<class UUserWidget> MainMenuClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
 	TSubclassOf<class UUserWidget> OptionMenuClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
+	TSubclassOf<class UUserWidget> HostMenuClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
+	TSubclassOf<class UUserWidget> ServerMenuClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
+	TSubclassOf<class UUserWidget> LoadingScreenClass;
+
+	void ChangeWidget(class UUserWidget* WidgetWp,const TSubclassOf<class UUserWidget> WidgetClass);
 	
 public:
 	UFUNCTION(BlueprintCallable)
@@ -47,4 +58,10 @@ public:
 	void ShowMainMenu();
 	UFUNCTION(BlueprintCallable)
 	void ShowOptionMenu();
+	UFUNCTION(BlueprintCallable)
+	void ShowHostMenu();
+	UFUNCTION(BlueprintCallable)
+	void ShowServerMenu();
+	UFUNCTION(BlueprintCallable)
+	void ShowLoadingScreen();
 };

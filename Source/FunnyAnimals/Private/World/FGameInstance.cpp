@@ -20,6 +20,21 @@ class AFLevelManager* UFGameInstance::GetLevelManager()
 	return IsValid(LevelManagerInstance) ? LevelManagerInstance : LevelManagerInstance = NewObject<AFLevelManager>(this, FName("LevelManager"));
 }
 
+
+void  UFGameInstance::ChangeWidget(UUserWidget* WidgetWp, const TSubclassOf<UUserWidget> WidgetClass)
+{
+	if (!WidgetClass)
+		return;
+
+	APlayerController* PC = GetPrimaryPlayerController();
+
+	if (!IsValid(WidgetWp))
+		WidgetWp = CreateWidget<UUserWidget>(this, WidgetClass);
+
+	WidgetWp->AddToViewport();
+	PC->SetShowMouseCursor(true);
+}
+
 void UFGameInstance::GameSaveCheck()
 {
 	const bool bExist = UGameplayStatics::DoesSaveGameExist(PlayerSettingSaveSlot, 0);
@@ -34,31 +49,53 @@ void UFGameInstance::GameSaveCheck()
 
 void UFGameInstance::ShowMainMenu()
 {
-	if (!MainMenuClass)
-		return;
-	
-	APlayerController * PC = GetPrimaryPlayerController();
-
-	if(!IsValid(MainMenuWP))
-		MainMenuWP = CreateWidget<UUserWidget>(this, MainMenuClass);
-
-	MainMenuWP->AddToViewport();
-	PC->SetShowMouseCursor(true);
+	ChangeWidget(MainMenuWP, MainMenuClass);
 }
 
 void UFGameInstance::ShowOptionMenu()
 {
 	if (!OptionMenuClass)
 		return;
-	
-	APlayerController * PC = GetPrimaryPlayerController();
 
-	if(!IsValid(OptionMenuWP))
+	APlayerController* PC = GetPrimaryPlayerController();
+
+	if (!IsValid(OptionMenuWP))
 		OptionMenuWP = CreateWidget<UFOptionMenuWidget>(this, OptionMenuClass);
 
 	OptionMenuWP->AddToViewport();
 	PC->SetShowMouseCursor(true);
 
-	if(!bCreateSaveGame)
-		OptionMenuWP->WelcomeMessageVis = ESlateVisibility::Visible;	
+	if (!bCreateSaveGame)
+		OptionMenuWP->WelcomeMessageVis = ESlateVisibility::Visible;
+}
+
+void UFGameInstance::ShowHostMenu()
+{
+	if (!HostMenuClass)
+		return;
+
+	if (!IsValid(HostMenuWP))
+		HostMenuWP = CreateWidget<UUserWidget>(this, HostMenuClass);
+
+	HostMenuWP->AddToViewport();
+}
+
+void UFGameInstance::ShowServerMenu()
+{
+	if (!ServerMenuClass)
+		return;
+
+	ServerMenuWP = CreateWidget<UUserWidget>(this, ServerMenuClass);
+	ServerMenuWP->AddToViewport();
+}
+
+void UFGameInstance::ShowLoadingScreen()
+{
+	if (!LoadingScreenClass)
+		return;
+
+	if (!IsValid(LoadingWP))
+		LoadingWP = CreateWidget<UUserWidget>(this, LoadingScreenClass);
+
+	LoadingWP->AddToViewport();
 }
