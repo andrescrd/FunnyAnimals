@@ -1,15 +1,31 @@
 #include "World/FGameInstance.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Engine/DemoNetDriver.h"
 #include "Kismet/GameplayStatics.h"
 #include "Suppot/Managers/FLevelManager.h"
 #include "GameFramework/PlayerController.h"
 #include "UI/FOptionMenuWidget.h"
+#include "OnlineSubsystem.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
+
+const static FName SESSION_NAME = FName("SESSION_FA");
 
 UFGameInstance::UFGameInstance()
 {
 	PlayerSettingSaveSlot = "PlayerSettingSlot";
 	bCreateSaveGame = false;
+	LobbyMapName = "Lobby";
+}
+
+void UFGameInstance::Init()
+{
+	Subsystem = IOnlineSubsystem::Get();
+	SessionInterface = Subsystem->GetSessionInterface();
+
+	if (SessionInterface)
+		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UFGameInstance::HandleOnCreateSession);
 }
 
 class AFLevelManager* UFGameInstance::GetLevelManager()
@@ -20,8 +36,7 @@ class AFLevelManager* UFGameInstance::GetLevelManager()
 	return IsValid(LevelManagerInstance) ? LevelManagerInstance : LevelManagerInstance = NewObject<AFLevelManager>(this, FName("LevelManager"));
 }
 
-
-void  UFGameInstance::ChangeWidget(UUserWidget* WidgetWp, const TSubclassOf<UUserWidget> WidgetClass)
+void UFGameInstance::ChangeWidget(UUserWidget* WidgetWp, const TSubclassOf<UUserWidget> WidgetClass)
 {
 	if (!WidgetClass)
 		return;
@@ -54,30 +69,14 @@ void UFGameInstance::ShowMainMenu()
 
 void UFGameInstance::ShowOptionMenu()
 {
-	if (!OptionMenuClass)
-		return;
-
-	APlayerController* PC = GetPrimaryPlayerController();
-
-	if (!IsValid(OptionMenuWP))
-		OptionMenuWP = CreateWidget<UFOptionMenuWidget>(this, OptionMenuClass);
-
-	OptionMenuWP->AddToViewport();
-	PC->SetShowMouseCursor(true);
-
+	ChangeWidget(OptionMenuWP, OptionMenuClass);
 	if (!bCreateSaveGame)
 		OptionMenuWP->WelcomeMessageVis = ESlateVisibility::Visible;
 }
 
 void UFGameInstance::ShowHostMenu()
 {
-	if (!HostMenuClass)
-		return;
-
-	if (!IsValid(HostMenuWP))
-		HostMenuWP = CreateWidget<UUserWidget>(this, HostMenuClass);
-
-	HostMenuWP->AddToViewport();
+	ChangeWidget(HostMenuWP, HostMenuClass);
 }
 
 void UFGameInstance::ShowServerMenu()
@@ -91,11 +90,48 @@ void UFGameInstance::ShowServerMenu()
 
 void UFGameInstance::ShowLoadingScreen()
 {
-	if (!LoadingScreenClass)
-		return;
+	ChangeWidget(LoadingWP, LoadingScreenClass);
+}
 
-	if (!IsValid(LoadingWP))
-		LoadingWP = CreateWidget<UUserWidget>(this, LoadingScreenClass);
+void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan, const FText NewServerName)
+{
+	MaxPlayers = NumberOfPlayers;
+	ServerName = NewServerName;
 
-	LoadingWP->AddToViewport();
+	ShowLoadingScreen();
+
+	if (FNamedOnlineSession* Exist = SessionInterface->GetNamedSession(SESSION_NAME))
+		SessionInterface->DestroySession(SESSION_NAME);
+
+	FOnlineSessionSettings SessionSettings;
+	SessionSettings.bIsLANMatch = EnableLan;
+	SessionSettings.NumPublicConnections = MaxPlayers;
+	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
+}
+
+void UFGameInstance::HandleOnCreateSession(FName SessionName, bool Success)
+{
+	if (Success)
+	{
+#if WITH_EDITOR
+		UE_LOG(LogTemp, Warning, TEXT("%s: sesion %s was created"), *Subsystem->GetSubsystemName().ToString(), *SessionName.ToString());
+#endif
+
+		UGameplayStatics::OpenLevel(this, LobbyMapName, true, FString("listen"));
+	}
+	else
+	{
+		//TODO: do something when session failed
+
+#if WITH_EDITOR
+		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
+#endif
+	}
+}
+
+void UFGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UFGameInstance, MaxPlayers);
+	DOREPLIFETIME(UFGameInstance, ServerName);
 }
