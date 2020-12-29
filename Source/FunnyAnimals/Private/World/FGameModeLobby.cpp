@@ -3,3 +3,6 @@
 
 #include "World/FGameModeLobby.h"
 
+void AFGameModeLobby::PostLogin(APlayerController* NewPlayer)
+{
+}

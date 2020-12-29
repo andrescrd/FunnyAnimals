@@ -21,6 +21,8 @@ protected:
 	// Managers
 	UPROPERTY(Transient)
 	class AFLevelManager *LevelManagerInstance;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName PlayerSettingSaveSlot;
 
 	// Player Config
 	UPROPERTY(EditDefaultsOnly)
@@ -29,5 +31,8 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	class AFLevelManager *GetLevelManager();
+
+	UFUNCTION(BlueprintCallable)
+	void GameSaveCheck();
 
 };

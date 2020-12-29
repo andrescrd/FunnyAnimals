@@ -33,7 +33,7 @@ public:
 
 	void Preparing();
 	void Playing();
-	void Complete();
+	void Complete() const;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnGameStateChange(EGameState NewGameState);

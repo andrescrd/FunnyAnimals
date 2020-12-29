@@ -2,7 +2,7 @@
 
 #include "World/FGameState.h"
 #include "Engine/World.h"
-#include "Players/FPlayerController.h"
+#include "Players/FPlayerControllerGameplay.h"
 #include "Players/FPlayerState.h"
 #include "Net/UnrealNetwork.h"
 
@@ -15,7 +15,7 @@ void AFGameState::MulticastOnComplete_Implementation(class APawn *InstigatorPawn
 {
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
-        AFPlayerController *PC = Cast<AFPlayerController>(It->Get());
+        AFPlayerControllerGameplay *PC = Cast<AFPlayerControllerGameplay>(It->Get());
 
         if (PC && PC->IsLocalController())
         {
@@ -31,7 +31,7 @@ void AFGameState::MulticastOnPreparing_Implementation()
 {
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
-        AFPlayerController *PC = Cast<AFPlayerController>(It->Get());
+        AFPlayerControllerGameplay *PC = Cast<AFPlayerControllerGameplay>(It->Get());
 
         if (PC && PC->IsLocalController())
         {
@@ -47,7 +47,7 @@ void AFGameState::MulticastOnPlaying_Implementation()
 {
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
-        AFPlayerController *PC = Cast<AFPlayerController>(It->Get());
+        AFPlayerControllerGameplay *PC = Cast<AFPlayerControllerGameplay>(It->Get());
 
         if (PC && PC->IsLocalController())
         {

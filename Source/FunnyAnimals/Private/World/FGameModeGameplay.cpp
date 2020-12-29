@@ -2,7 +2,7 @@
 
 #include "World/FGameModeGameplay.h"
 #include "World/FGameState.h"
-#include "Players/FPlayerController.h"
+#include "Players/FPlayerControllerGameplay.h"
 #include "Players/FPlayerState.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,7 +14,7 @@ AFGameModeGameplay::AFGameModeGameplay()
 {
     CurrentGameState = EGameState::UNKNOW;
     GameStateClass = AFGameState::StaticClass();
-    PlayerControllerClass = AFPlayerController::StaticClass();
+    PlayerControllerClass = AFPlayerControllerGameplay::StaticClass();
     PlayerStateClass = AFPlayerState::StaticClass();
 }
 
@@ -74,7 +74,7 @@ void AFGameModeGameplay::Playing()
     }
 }
 
-void AFGameModeGameplay::Complete()
+void AFGameModeGameplay::Complete() const
 {
     if (AFGameState *GS = GetGameState<AFGameState>())
     {

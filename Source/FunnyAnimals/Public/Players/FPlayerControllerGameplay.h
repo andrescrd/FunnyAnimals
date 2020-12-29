@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "FPlayerController.generated.h"
+#include "FPlayerControllerGameplay.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FUNNYANIMALS_API AFPlayerController : public APlayerController
+class FUNNYANIMALS_API AFPlayerControllerGameplay : public APlayerController
 {
 	GENERATED_BODY()
 

@@ -9,3 +9,7 @@ class AFLevelManager *UFGameInstance::GetLevelManager()
 
     return IsValid(LevelManagerInstance) ? LevelManagerInstance : LevelManagerInstance = NewObject<AFLevelManager>(this, FName("LevelManager"));
 }
+
+void UFGameInstance::GameSaveCheck()
+{
+}
