@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "OnlineSubsystem.h"
+// #include "OnlineSubsystem.h"
+// #include "FindSessionsCallbackProxy.h"
 #include "FGameInstance.generated.h"
 
 /**
@@ -19,9 +20,7 @@ public:
 	UFGameInstance();
 
 protected:
-	class IOnlineSubsystem* Subsystem;
-	IOnlineSessionPtr SessionInterface;
-	
+	// IOnlineSessionPtr SessionInterface;
 
 	class UUserWidget* MainMenuWP;
 	class UFOptionMenuWidget* OptionMenuWP;
@@ -30,9 +29,9 @@ protected:
 	class UUserWidget* LoadingWP;
 
 	// Properties
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	int MaxPlayers;
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	FText ServerName;
 
 	// Managers
@@ -60,11 +59,10 @@ protected:
 	TSubclassOf<class UUserWidget> LoadingScreenClass;
 
 	void ChangeWidget(class UUserWidget* WidgetWp, const TSubclassOf<class UUserWidget> WidgetClass);
+	// void HandleOnCreateSession(FName SessionName, bool Success);
 
 	virtual void Init() override;
-
-	void HandleOnCreateSession(FName SessionName, bool Success);
-
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	class AFLevelManager* GetLevelManager();
@@ -82,6 +80,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowLoadingScreen();
 
-	UFUNCTION(BlueprintCallable)
-	void LaunchLobby(const int NumberOfPlayers, bool EnableLan, const FText NewServerName);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void LaunchLobby(int NumberOfPlayers, bool EnableLan, const FText& NewServerName);
+	//  UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	// void JoinServer(const FBlueprintSessionResult& SessionToJoin);
+	
 };

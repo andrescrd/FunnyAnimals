@@ -16,7 +16,8 @@ public class FunnyAnimals : ModuleRules
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
 		// Uncomment if you are using online features
-		PrivateDependencyModuleNames.Add("OnlineSubsystem");
+		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+		// PrivateDependencyModuleNames.Add("OnlineSubsystemUtils");
 		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 
 

@@ -6,11 +6,11 @@
 #include "Suppot/Managers/FLevelManager.h"
 #include "GameFramework/PlayerController.h"
 #include "UI/FOptionMenuWidget.h"
-#include "OnlineSubsystem.h"
-#include "Interfaces/OnlineSessionInterface.h"
-#include "OnlineSessionSettings.h"
+// #include "FindSessionsCallbackProxy.h"
+// #include "CreateSessionCallbackProxy.h"
 
-const static FName SESSION_NAME = FName("SESSION_FA");
+
+const static FName SESSION_NAME = "SESSION_UE";
 
 UFGameInstance::UFGameInstance()
 {
@@ -21,11 +21,13 @@ UFGameInstance::UFGameInstance()
 
 void UFGameInstance::Init()
 {
-	Subsystem = IOnlineSubsystem::Get();
-	SessionInterface = Subsystem->GetSessionInterface();
-
-	if (SessionInterface)
-		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UFGameInstance::HandleOnCreateSession);
+	// if(IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
+	// {
+	// 	SessionInterface = Subsystem->GetSessionInterface();
+	//
+	// 	if (SessionInterface.IsValid())
+	// 		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UFGameInstance::HandleOnCreateSession);
+	// }
 }
 
 class AFLevelManager* UFGameInstance::GetLevelManager()
@@ -47,19 +49,19 @@ void UFGameInstance::ChangeWidget(UUserWidget* WidgetWp, const TSubclassOf<UUser
 		WidgetWp = CreateWidget<UUserWidget>(this, WidgetClass);
 
 	WidgetWp->AddToViewport();
-	PC->SetShowMouseCursor(true);
+
+	if (PC)
+		PC->SetShowMouseCursor(true);
 }
 
 void UFGameInstance::GameSaveCheck()
 {
-	const bool bExist = UGameplayStatics::DoesSaveGameExist(PlayerSettingSaveSlot, 0);
+	bCreateSaveGame = UGameplayStatics::DoesSaveGameExist(PlayerSettingSaveSlot, 0);
 
-	if (bExist)
+	if (bCreateSaveGame)
 		ShowMainMenu();
 	else
 		ShowOptionMenu();
-
-	bCreateSaveGame = bExist;
 }
 
 void UFGameInstance::ShowMainMenu()
@@ -93,41 +95,38 @@ void UFGameInstance::ShowLoadingScreen()
 	ChangeWidget(LoadingWP, LoadingScreenClass);
 }
 
-void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan, const FText NewServerName)
-{
-	MaxPlayers = NumberOfPlayers;
-	ServerName = NewServerName;
-
-	ShowLoadingScreen();
-
-	if (FNamedOnlineSession* Exist = SessionInterface->GetNamedSession(SESSION_NAME))
-		SessionInterface->DestroySession(SESSION_NAME);
-
-	FOnlineSessionSettings SessionSettings;
-	SessionSettings.bIsLANMatch = EnableLan;
-	SessionSettings.NumPublicConnections = MaxPlayers;
-	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
-}
-
-void UFGameInstance::HandleOnCreateSession(FName SessionName, bool Success)
-{
-	if (Success)
-	{
-#if WITH_EDITOR
-		UE_LOG(LogTemp, Warning, TEXT("%s: sesion %s was created"), *Subsystem->GetSubsystemName().ToString(), *SessionName.ToString());
-#endif
-
-		UGameplayStatics::OpenLevel(this, LobbyMapName, true, FString("listen"));
-	}
-	else
-	{
-		//TODO: do something when session failed
-
-#if WITH_EDITOR
-		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
-#endif
-	}
-}
+// void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan, const FText& NewServerName)
+// {
+// 	MaxPlayers = NumberOfPlayers;
+// 	ServerName = NewServerName;
+//
+// 	ShowLoadingScreen();
+// 	//
+// 	// if (FNamedOnlineSession* Exist = SessionInterface->GetNamedSession(SESSION_NAME))
+// 	// 	SessionInterface->DestroySession(SESSION_NAME);
+//
+// 	const auto SessionSettings = MakeShareable(new FOnlineSessionSettings());	
+// 	SessionSettings.Object->bIsLANMatch = EnableLan;	
+// 	 SessionSettings.Object->NumPublicConnections = MaxPlayers;
+//
+// 	SessionInterface->CreateSession(0, SESSION_NAME, *SessionSettings.Object);
+// }
+//
+// void UFGameInstance::HandleOnCreateSession(FName SessionName, bool Success)
+// {
+// 	if (Success)
+// 	{
+// 		UGameplayStatics::OpenLevel(GetWorld(),LobbyMapName,true, FString("listen"));
+// 	}	
+// 	else
+// 	{
+// 		//TODO: do something when session failed
+//
+// #if WITH_EDITOR
+// 		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
+// #endif
+// 	}
+// }
 
 void UFGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
