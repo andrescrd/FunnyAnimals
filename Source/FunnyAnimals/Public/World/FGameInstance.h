@@ -15,24 +15,36 @@ class FUNNYANIMALS_API UFGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
-	// virtual void Init() override;
+	UFGameInstance();
 
 protected:
+	class UUserWidget* MainMenuWP;
+	class UFOptionMenuWidget* OptionMenuWP;
+	
 	// Managers
 	UPROPERTY(Transient)
 	class AFLevelManager *LevelManagerInstance;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName PlayerSettingSaveSlot;
-
-	// Player Config
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AFLevelManager> LevelManagerClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString PlayerSettingSaveSlot;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	bool bCreateSaveGame;
 
+	// Widgets
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
+	TSubclassOf<class UUserWidget> MainMenuClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
+	TSubclassOf<class UUserWidget> OptionMenuClass;
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	class AFLevelManager *GetLevelManager();
 
 	UFUNCTION(BlueprintCallable)
 	void GameSaveCheck();
-
+	UFUNCTION(BlueprintCallable)
+	void ShowMainMenu();
+	UFUNCTION(BlueprintCallable)
+	void ShowOptionMenu();
 };
