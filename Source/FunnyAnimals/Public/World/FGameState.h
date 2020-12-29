@@ -22,9 +22,9 @@ protected:
 	int CounterTime;
 
 public:
-	int GetCounterTime();
-	void SetCounterTime(int MaxTime);
-	void UpdateCounterTime(int DeltaTime);
+	int GetCounterTime() const;
+	void SetCounterTime(const int MaxTime);
+	void UpdateCounterTime(const int DeltaTime);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastOnComplete(class APawn *InstigatorPawn);

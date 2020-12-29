@@ -29,6 +29,13 @@ protected:
 	class UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class USoundWave* ExplodeSoundWave;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UParticleSystem* ParticleSystem;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(CalmpMin= "0.5", UIMin="0.5"))
+	float ParticleSystemScale;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int TimeToExplode;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bAutoActivate;

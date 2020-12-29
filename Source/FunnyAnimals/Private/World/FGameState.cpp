@@ -13,7 +13,7 @@ AFGameState::AFGameState()
 
 void AFGameState::MulticastOnComplete_Implementation(class APawn *InstigatorPawn)
 {
-    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
         AFPlayerController *PC = Cast<AFPlayerController>(It->Get());
 
@@ -29,7 +29,7 @@ void AFGameState::MulticastOnComplete_Implementation(class APawn *InstigatorPawn
 
 void AFGameState::MulticastOnPreparing_Implementation()
 {
-    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
         AFPlayerController *PC = Cast<AFPlayerController>(It->Get());
 
@@ -45,7 +45,7 @@ void AFGameState::MulticastOnPreparing_Implementation()
 
 void AFGameState::MulticastOnPlaying_Implementation()
 {
-    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
         AFPlayerController *PC = Cast<AFPlayerController>(It->Get());
 
@@ -66,17 +66,17 @@ void AFGameState::MulticastPlayerWinner_Implementation()
     });
 }
 
-void AFGameState::SetCounterTime(int MaxTime)
+void AFGameState::SetCounterTime(const int MaxTime)
 {
     CounterTime = MaxTime;
 }
 
-void AFGameState::UpdateCounterTime(int DeltaTime)
+void AFGameState::UpdateCounterTime(const int DeltaTime)
 {
     CounterTime += DeltaTime;
 }
 
-int AFGameState::GetCounterTime()
+int AFGameState::GetCounterTime() const
 {
     return CounterTime;
 }

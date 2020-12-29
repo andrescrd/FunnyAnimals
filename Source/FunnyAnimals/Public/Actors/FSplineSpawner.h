@@ -18,19 +18,19 @@ public:
 protected:
 	float Size;
 	
-	UPROPERTY(BlueprintReadOnly, Category=Setting)
+	UPROPERTY(BlueprintReadOnly)
 	TArray<class UInstancedStaticMeshComponent*> InstancedStaticMeshes;	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Setting)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class USplineComponent* SplinComp;	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category=Setting)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<class UStaticMesh*> StaticMeshes;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category=Setting)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FRandomStream Scale;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category=Setting)	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)	
 	FFloatRange ScaleRange;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category=Setting)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Spacing;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category=Setting)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool RandomRotation;
 	
 	virtual void OnConstruction(const FTransform& Transform) override;

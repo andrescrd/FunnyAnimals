@@ -16,7 +16,8 @@ AFProjectile::AFProjectile()
 	bAutoActivate = false;
 	bExplode = false;
 	TimeToExplode = 5;
-	
+	ParticleSystemScale = 1;
+
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetSimulatePhysics(true);
 	RootComponent = MeshComp;
@@ -54,7 +55,7 @@ void AFProjectile::ActivateExplode()
 {
 	if (bExplode)
 		return;
-
+	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle_ExplodeCounter, this, &AFProjectile::OnExplode, TimeToExplode, false);
 }
 
@@ -69,10 +70,16 @@ void AFProjectile::OnExplode()
 	IgnoreActors.Add(this);
 	UGameplayStatics::ApplyRadialDamage(this, 10, GetActorLocation(), RadialForceComp->Radius, nullptr, IgnoreActors, this, GetInstigatorController(), true);
 
+	if (ExplodeSoundWave)
+		UGameplayStatics::PlaySoundAtLocation(this, ExplodeSoundWave, GetActorLocation());
+
+	if (ParticleSystem)
+		UGameplayStatics::SpawnEmitterAtLocation(this, ParticleSystem, GetActorLocation(), FRotator::ZeroRotator, FVector(ParticleSystemScale));
+
 	SetLifeSpan(1.f);
 }
 
-void AFProjectile::ActivateMovement(const float Speed,const FVector Velocity) const
+void AFProjectile::ActivateMovement(const float Speed, const FVector Velocity) const
 {
 	if (ProjectileMovement->IsActive())
 		return;

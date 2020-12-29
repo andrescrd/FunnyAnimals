@@ -21,7 +21,6 @@ AFGameModeGameplay::AFGameModeGameplay()
 void AFGameModeGameplay::BeginPlay()
 {
     Super::BeginPlay();
-
     SetGameState(EGameState::PREPARING);
 }
 
