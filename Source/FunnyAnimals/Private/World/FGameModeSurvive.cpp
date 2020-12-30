@@ -5,6 +5,7 @@
 #include "Players/FPlayerControllerGameplay.h"
 #include "Players/FPlayerState.h"
 #include "TimerManager.h"
+#include "Actors/FLauncher.h"
 #include "Kismet/GameplayStatics.h"
 #include "Actors/FSpawner.h"
 #include "Suppot/Helpers/FBlueprintFunctionLibrary.h"
@@ -53,10 +54,20 @@ void AFGameModeSurvive::Preparing()
     for (int i = 0; i < Spawners.Num(); i++)
     {
         AFSpawner *Spawner = Cast<AFSpawner>(Spawners[i]);
-        if (!Spawner->IsActive())
+        if (!Spawner->IsAutoActive())
             Spawner->Spawn(LM->GetGameplayLevel(0).MaxItemToSpawn);
     }
 
+    TArray<AActor *> Launchers;
+    UGameplayStatics::GetAllActorsOfClass(this, AFLauncher::StaticClass(), Launchers);
+
+    for (int i = 0; i < Launchers.Num(); ++i)
+    {
+        AFLauncher* Launcher = Cast<AFLauncher>(Launchers[i]);
+        if(!Launcher->IsAutoActivate())
+            Launcher->Activate();        
+    }
+    
     FTimerHandle TimerHandle;
     GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeSurvive::SetGameState, EGameState::PLAYING), 1.f, false);
 }

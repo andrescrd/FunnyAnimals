@@ -64,7 +64,7 @@ void AFProjectile::OnExplode()
 	bExplode = true;
 
 	RadialForceComp->FireImpulse();
-	DrawDebugSphere(GetWorld(), GetActorLocation(), RadialForceComp->Radius, 12, FColor::Red, false, 5.f, 0, 5.f);
+	// DrawDebugSphere(GetWorld(), GetActorLocation(), RadialForceComp->Radius, 12, FColor::Red, false, 5.f, 0, 5.f);
 
 	TArray<AActor*> IgnoreActors;
 	IgnoreActors.Add(this);

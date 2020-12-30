@@ -11,7 +11,7 @@
 // Sets default values
 AFLauncher::AFLauncher()
 {
-	bAutoActivate = true;
+	bAutoActivate = false;
 	ProjectileSpeed = 2000;
 	TimeOfTimeline = 20;
 	TimeBetweenSpawn = FInt32Range::Inclusive(5, 15);
@@ -115,6 +115,8 @@ void AFLauncher::Deactivate()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Spawner);
 }
+
+bool AFLauncher::IsAutoActivate() const { return bAutoActivate; }
 
 void AFLauncher::SpawnProjectiles(const FVector EndLocation)
 {

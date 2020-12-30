@@ -10,6 +10,7 @@
 AFSpawner::AFSpawner()
 {
 	bAutoActive = false;
+	bIsActive = false;
 	MaxSpawn = 10;
 
 	BoxSpawner = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxSpawner"));
@@ -55,10 +56,7 @@ void AFSpawner::Spawn(int MaxActorsToSpawn)
 	}
 }
 
-bool AFSpawner::IsActive()
-{
-	return bAutoActive;
-}
+bool AFSpawner::IsAutoActive() const { return bAutoActive; }
 
 FVector AFSpawner::GetRandomLocation() const
 {
@@ -66,15 +64,3 @@ FVector AFSpawner::GetRandomLocation() const
 	const FVector Extent = BoxSpawner->Bounds.BoxExtent;
 	return UKismetMathLibrary::RandomPointInBoundingBox(Origin, Extent);
 }
-
-// FVector AFSpawner::GetRandomLocation()
-// {
-//     FHitResult OutHit;
-//     FVector Start = FVector(FMath::RandRange(-2000.0f, 2000.0f), FMath::RandRange(-2000.0f, 2000.0f), 4000.0f);
-//     FVector End = Start - FVector(0, 0, 8000.f);
-//     FCollisionQueryParams Params;
-//     Params.AddIgnoredActor(this);
-//     GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel ::ECC_Visibility, Params);
-//
-//     return OutHit.Location;
-// }

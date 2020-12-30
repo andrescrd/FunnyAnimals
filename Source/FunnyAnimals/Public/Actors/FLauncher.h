@@ -63,4 +63,7 @@ public:
 
 	void Activate();
 	void Deactivate();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAutoActivate() const;
 };

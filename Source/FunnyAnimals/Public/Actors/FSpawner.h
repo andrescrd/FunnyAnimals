@@ -16,6 +16,8 @@ public:
 	AFSpawner();
 
 protected:
+	bool bIsActive;
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	class UBoxComponent* BoxSpawner;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -33,5 +35,5 @@ public:
     UFUNCTION(BlueprintCallable)
     void Spawn(int MaxActorsToSpawn);
     UFUNCTION(BlueprintCallable)
-	bool IsActive();
+	bool IsAutoActive() const;	
 };
