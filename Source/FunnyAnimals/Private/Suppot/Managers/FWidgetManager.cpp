@@ -7,7 +7,7 @@
 
 void AFWidgetManager::ChangeWidget(UUserWidget* WidgetWp, const TSubclassOf<UUserWidget> WidgetClass, APlayerController* PC) const
 {
-	if (!WidgetClass)
+	if (!WidgetClass && !PC)
 		return;
 	
 	if (!IsValid(WidgetWp))
