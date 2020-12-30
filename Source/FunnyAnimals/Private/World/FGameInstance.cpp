@@ -89,6 +89,9 @@ void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan
 
 	ShowLoadingScreen();
 
+	if (FNamedOnlineSession* Exist = SessionInterface->GetNamedSession(SESSION_NAME))
+	 	SessionInterface->DestroySession(SESSION_NAME);
+	
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bIsLANMatch = EnableLan;
 	SessionSettings.NumPublicConnections = MaxPlayers;
@@ -106,12 +109,10 @@ void UFGameInstance::DestroySession() const
 
 void UFGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Session with name %s has been created"), *SessionName.ToString());
-
 	if (Success)
-		GetLevelManager()->LoadLobby();
+		GetLevelManager()->LoadLobby(GetWorld());
 	else
-	UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
+		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
 }
 
 void UFGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)

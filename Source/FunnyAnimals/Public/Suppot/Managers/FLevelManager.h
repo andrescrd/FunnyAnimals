@@ -39,7 +39,7 @@ public:
 	void LoadGameplayLevel(class UObject *Context,const FName LevelNameToLoad);
 	
 	UFUNCTION(BlueprintCallable)
-	void LoadLobby() const;
+	void LoadLobby(class UObject *Context) const;
 	UFUNCTION(BlueprintCallable)
-	void LoadMainMenu() const;
+	void LoadMainMenu(class UObject *Context) const;
 };

@@ -42,12 +42,14 @@ void AFLevelManager::LoadGameplayLevel(class UObject *Context, const FName Level
     UGameplayStatics::OpenLevel(World, LevelNameToLoad, true);
 }
 
-void AFLevelManager::LoadLobby() const
+void AFLevelManager::LoadLobby(class UObject *Context) const
 {
-    UGameplayStatics::OpenLevel(GetWorld(), LobbyMapName, true, FString("listen"));
+    UWorld *World = GEngine->GetWorldFromContextObjectChecked(Context);
+    UGameplayStatics::OpenLevel(World, LobbyMapName, true, FString("listen"));
 }
 
-void AFLevelManager::LoadMainMenu() const
+void AFLevelManager::LoadMainMenu(class UObject *Context) const
 {
-    UGameplayStatics::OpenLevel(GetWorld(), MainMenuMapName, true);
+    UWorld *World = GEngine->GetWorldFromContextObjectChecked(Context);
+    UGameplayStatics::OpenLevel(World, MainMenuMapName, true);
 }
