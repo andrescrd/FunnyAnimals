@@ -6,6 +6,9 @@
 #include "Engine/GameInstance.h"
 #include "OnlineSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
+#include "Types/FTypes.h"
+
 #include "FGameInstance.generated.h"
 
 /**
@@ -21,7 +24,8 @@ public:
 
 protected:
 	IOnlineSessionPtr SessionInterface;
-
+	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
+	
 	// Properties
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int MaxPlayers;
@@ -73,6 +77,8 @@ public:
 	void LaunchLobby(int NumberOfPlayers, bool EnableLan, const FText NewServerName);
 	UFUNCTION(BlueprintCallable)
 	void DestroySession() const;
-	// UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	// void JoinServer(const FBlueprintSessionResult& SessionToJoin);	
+	UFUNCTION(BlueprintCallable)
+	void JoinServer(const FSessionResult DesiredSession) const;
+	UFUNCTION(BlueprintCallable)
+	void FindSession(const bool EnableLan);
 };

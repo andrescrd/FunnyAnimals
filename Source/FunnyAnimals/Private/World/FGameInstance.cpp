@@ -107,6 +107,26 @@ void UFGameInstance::DestroySession() const
 	SessionInterface->DestroySession(SESSION_NAME);
 }
 
+void UFGameInstance::JoinServer(const FSessionResult DesiredSession) const
+{
+	if (!SessionInterface.IsValid() && DesiredSession.Result.IsValid())
+		return;
+
+	SessionInterface->JoinSession(0, SESSION_NAME, DesiredSession.Result);
+}
+
+void UFGameInstance::FindSession(const bool EnableLan)
+{
+
+	if (!SessionInterface.IsValid())
+		return;
+
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	SessionSearch->MaxSearchResults = 20;
+	SessionSearch->bIsLanQuery = EnableLan;
+	SessionInterface->FindSessions(0,SessionSearch.ToSharedRef());	
+}
+
 void UFGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
 	if (Success)
@@ -122,10 +142,34 @@ void UFGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 
 void UFGameInstance::OnFindSessionsComplete(bool Success)
 {
+	if(Success && SessionInterface.IsValid())
+	{
+		FSessionResult SessionResult;
+		
+		if(SessionSearch->SearchResults.Num() > 0)
+		{
+			for (int i = 0; i < SessionSearch->SearchResults.Num(); ++i)
+			{
+				if(MaxPlayers != SessionSearch->SearchResults[i].Session.NumOpenPublicConnections)
+				{
+					SessionResult.Result = SessionSearch->SearchResults[i];
+					break;
+				}					
+			}
+		}
+		else
+		{
+			
+		}		
+	}else
+	{
+		
+	}
 }
 
 void UFGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type SessionType)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Join in session completed"));
 }
 
 // *****************
