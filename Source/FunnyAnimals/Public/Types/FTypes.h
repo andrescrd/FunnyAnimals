@@ -24,7 +24,7 @@ struct FLevelConfig
     GENERATED_USTRUCT_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    FName LevelName;
+    FName MapName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     int MaxTime;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -32,7 +32,7 @@ struct FLevelConfig
 
     FLevelConfig()
     {
-        LevelName = TEXT("NONE");
+        MapName = TEXT("NONE");
         MaxTime = 10;
         MaxItemToSpawn = 10;
     }
