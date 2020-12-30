@@ -39,6 +39,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePlay)
 	class UDataTable *DataTable;
-	
+
 	void SetColor(const int8 Index,const FLinearColor Color, class UMaterialInterface *MaterialInt, class USkeletalMeshComponent *SkeletalMesh);
 };

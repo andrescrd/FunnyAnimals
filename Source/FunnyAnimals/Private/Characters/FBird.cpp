@@ -21,7 +21,7 @@ void AFBird::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FCharacterColor Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
+	const FCharacterColor Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
 	SetColor(1, Color.ColorBase, GetMesh()->GetMaterial(0), GetMesh());
 	SetColor(2, Color.ColorLight, GetMesh()->GetMaterial(0), GetMesh());
 	SetColor(3, Color.ColorDark, GetMesh()->GetMaterial(0), GetMesh());
