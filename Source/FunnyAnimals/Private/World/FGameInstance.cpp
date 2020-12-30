@@ -14,18 +14,17 @@ UFGameInstance::UFGameInstance()
 {
 	PlayerSettingSaveSlot = "PlayerSettingSlot";
 	bCreateSaveGame = false;
-	LobbyMapName = "Lobby";
 }
 
 void UFGameInstance::Init()
 {
-	if(IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
+	if (IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
 	{
 		SessionInterface = Subsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
-			SessionInterface->OnCreateSessionCompleteDelegates. AddUObject(this, &UFGameInstance::OnCreateSessionComplete);
-			SessionInterface->OnDestroySessionCompleteDelegates. AddUObject(this, &UFGameInstance::OnDestroySessionComplete);
+			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UFGameInstance::OnCreateSessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UFGameInstance::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UFGameInstance::OnFindSessionsComplete);
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UFGameInstance::OnJoinSessionsComplete);
 		}
@@ -62,7 +61,6 @@ AFWidgetManager* UFGameInstance::GetWidgetManager()
 	return IsValid(WidgetManagerInstance) ? WidgetManagerInstance : WidgetManagerInstance = NewObject<AFWidgetManager>(this, FName("WidgetManager"));
 }
 
-
 // *****************
 // UI Widgets
 // *****************
@@ -85,25 +83,25 @@ void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan
 {
 	if (!SessionInterface.IsValid())
 		return;
-	
+
 	MaxPlayers = NumberOfPlayers;
 	ServerName = NewServerName;
-	
+
 	ShowLoadingScreen();
-	
-	FOnlineSessionSettings SessionSettings;	
-	SessionSettings.bIsLANMatch = EnableLan;	
+
+	FOnlineSessionSettings SessionSettings;
+	SessionSettings.bIsLANMatch = EnableLan;
 	SessionSettings.NumPublicConnections = MaxPlayers;
-	
+
 	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 }
 
-void UFGameInstance::DestroySession()
+void UFGameInstance::DestroySession() const
 {
 	if (!SessionInterface.IsValid())
 		return;
 
-	SessionInterface->DestroySession(SESSION_NAME);	
+	SessionInterface->DestroySession(SESSION_NAME);
 }
 
 void UFGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
@@ -111,14 +109,9 @@ void UFGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 	UE_LOG(LogTemp, Warning, TEXT("Session with name %s has been created"), *SessionName.ToString());
 
 	if (Success)
-	{
-		UGameplayStatics::OpenLevel(GetWorld(),LobbyMapName,true, FString("listen"));
-	}	
+		GetLevelManager()->LoadLobby();
 	else
-	{
-		//TODO: do something when session failed
-		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
 }
 
 void UFGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
@@ -132,8 +125,11 @@ void UFGameInstance::OnFindSessionsComplete(bool Success)
 
 void UFGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type SessionType)
 {
-	
 }
+
+// *****************
+// Replication
+// *****************
 
 void UFGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

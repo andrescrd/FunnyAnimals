@@ -43,8 +43,6 @@ protected:
 	FString PlayerSettingSaveSlot;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	bool bCreateSaveGame;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName LobbyMapName;
 
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);
@@ -74,7 +72,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LaunchLobby(int NumberOfPlayers, bool EnableLan, const FText NewServerName);
 	UFUNCTION(BlueprintCallable)
-	void DestroySession();
+	void DestroySession() const;
 	// UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	// void JoinServer(const FBlueprintSessionResult& SessionToJoin);	
 };

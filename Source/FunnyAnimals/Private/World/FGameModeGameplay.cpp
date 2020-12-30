@@ -54,7 +54,7 @@ void AFGameModeGameplay::Preparing()
     {
         AFSpawner *Spawner = Cast<AFSpawner>(Spawners[i]);
         if (!Spawner->IsActive())
-            Spawner->Spawn(LM->GetLevel(0).MaxItemToSpawn);
+            Spawner->Spawn(LM->GetGameplayLevel(0).MaxItemToSpawn);
     }
 
     FTimerHandle TimerHandle;
@@ -68,7 +68,7 @@ void AFGameModeGameplay::Playing()
     if (AFGameState *GS = GetGameState<AFGameState>())
     {
         GS->MulticastOnPlaying();
-        GS->SetCounterTime(LM->GetLevel(0).MaxTime);
+        GS->SetCounterTime(LM->GetGameplayLevel(0).MaxTime);
 
         GetWorldTimerManager().SetTimer(Counter_TimerHandle, this, &AFGameModeGameplay::StartCounter, 1.f, true);
     }
