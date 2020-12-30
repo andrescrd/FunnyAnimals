@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "World/FGameModeGameplay.h"
-#include "World/FGameState.h"
+#include "World/FGameModeSurvive.h"
+#include "World/FGameStateSurvive.h"
 #include "Players/FPlayerControllerGameplay.h"
 #include "Players/FPlayerState.h"
 #include "TimerManager.h"
@@ -10,26 +10,26 @@
 #include "Suppot/Helpers/FBlueprintFunctionLibrary.h"
 #include "Suppot/Managers/FLevelManager.h"
 
-AFGameModeGameplay::AFGameModeGameplay()
+AFGameModeSurvive::AFGameModeSurvive()
 {
     CurrentGameState = EGameState::UNKNOW;
-    GameStateClass = AFGameState::StaticClass();
+    GameStateClass = AFGameStateSurvive::StaticClass();
     PlayerControllerClass = AFPlayerControllerGameplay::StaticClass();
-    PlayerStateClass = AFPlayerState::StaticClass();
+    PlayerStateClass = AFPlayerState::StaticClass();    
 }
 
-void AFGameModeGameplay::BeginPlay()
+void AFGameModeSurvive::BeginPlay()
 {
     Super::BeginPlay();
     SetGameState(EGameState::PREPARING);
 }
 
-EGameState AFGameModeGameplay::GetCurrentGameState() const
+EGameState AFGameModeSurvive::GetCurrentGameState() const
 {
     return CurrentGameState;
 }
 
-void AFGameModeGameplay::SetGameState(const EGameState NewGameState)
+void AFGameModeSurvive::SetGameState(const EGameState NewGameState)
 {
     if (CurrentGameState == NewGameState)
         return;
@@ -40,11 +40,11 @@ void AFGameModeGameplay::SetGameState(const EGameState NewGameState)
     OnGameStateChange(CurrentGameState);
 }
 
-void AFGameModeGameplay::Preparing()
+void AFGameModeSurvive::Preparing()
 {
     AFLevelManager *LM = UFBlueprintFunctionLibrary::GetLevelManager(this);
 
-    if (AFGameState *GS = GetGameState<AFGameState>())
+    if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
         GS->MulticastOnPreparing();
 
     TArray<AActor *> Spawners;
@@ -58,34 +58,34 @@ void AFGameModeGameplay::Preparing()
     }
 
     FTimerHandle TimerHandle;
-    GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeGameplay::SetGameState, EGameState::PLAYING), 1.f, false);
+    GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeSurvive::SetGameState, EGameState::PLAYING), 1.f, false);
 }
 
-void AFGameModeGameplay::Playing()
+void AFGameModeSurvive::Playing()
 {
     AFLevelManager *LM = UFBlueprintFunctionLibrary::GetLevelManager(this);
 
-    if (AFGameState *GS = GetGameState<AFGameState>())
+    if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
     {
         GS->MulticastOnPlaying();
         GS->SetCounterTime(LM->GetGameplayLevel(0).MaxTime);
 
-        GetWorldTimerManager().SetTimer(Counter_TimerHandle, this, &AFGameModeGameplay::StartCounter, 1.f, true);
+        GetWorldTimerManager().SetTimer(Counter_TimerHandle, this, &AFGameModeSurvive::StartCounter, 1.f, true);
     }
 }
 
-void AFGameModeGameplay::Complete() const
+void AFGameModeSurvive::Complete() const
 {
-    if (AFGameState *GS = GetGameState<AFGameState>())
+    if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
     {
         GS->MulticastOnComplete(nullptr);
         GS->MulticastPlayerWinner();
     }
 }
 
-void AFGameModeGameplay::StartCounter()
+void AFGameModeSurvive::StartCounter()
 {
-    if (AFGameState *GS = GetGameState<AFGameState>())
+    if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
     {
         if (GS->GetCounterTime() > 0)
         {
@@ -99,7 +99,7 @@ void AFGameModeGameplay::StartCounter()
     }
 }
 
-void AFGameModeGameplay::HandleGameState(const EGameState NewGameState)
+void AFGameModeSurvive::HandleGameState(const EGameState NewGameState)
 {
     switch (NewGameState)
     {
