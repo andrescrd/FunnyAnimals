@@ -86,14 +86,15 @@ void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan
 
 	MaxPlayers = NumberOfPlayers;
 	ServerName = NewServerName;
+	bEnableLan = EnableLan;
 
 	ShowLoadingScreen();
 
 	if (FNamedOnlineSession* Exist = SessionInterface->GetNamedSession(SESSION_NAME))
-	 	SessionInterface->DestroySession(SESSION_NAME);
-	
+		SessionInterface->DestroySession(SESSION_NAME);
+
 	FOnlineSessionSettings SessionSettings;
-	SessionSettings.bIsLANMatch = EnableLan;
+	SessionSettings.bIsLANMatch = bEnableLan;
 	SessionSettings.NumPublicConnections = MaxPlayers;
 
 	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
@@ -107,30 +108,31 @@ void UFGameInstance::DestroySession() const
 	SessionInterface->DestroySession(SESSION_NAME);
 }
 
-void UFGameInstance::JoinServer(const FSessionResult DesiredSession) const
+void UFGameInstance::JoinServer(const FSessionResult SessionToJoin) const
 {
-	if (!SessionInterface.IsValid() && DesiredSession.Result.IsValid())
+	if (!SessionInterface.IsValid() && SessionToJoin.Result.IsValid())
 		return;
 
-	SessionInterface->JoinSession(0, SESSION_NAME, DesiredSession.Result);
+	SessionInterface->JoinSession(0, SESSION_NAME, SessionToJoin.Result);
 }
 
-void UFGameInstance::FindSession(const bool EnableLan)
+void UFGameInstance::FindSession(const bool EnableLan, const FFoundSessionDelegate& Callback)
 {
-
 	if (!SessionInterface.IsValid())
 		return;
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	SessionSearch->MaxSearchResults = 20;
 	SessionSearch->bIsLanQuery = EnableLan;
-	SessionInterface->FindSessions(0,SessionSearch.ToSharedRef());	
+
+	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+	FoundSessionDelegate = Callback;
 }
 
 void UFGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
 	if (Success)
-		GetLevelManager()->LoadLobby(GetWorld());
+		GetLevelManager()->LoadLobby(GetWorld(), bEnableLan);
 	else
 		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
 }
@@ -142,28 +144,40 @@ void UFGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 
 void UFGameInstance::OnFindSessionsComplete(bool Success)
 {
-	if(Success && SessionInterface.IsValid())
+	if (SessionSearch.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Find Session complete %d"), SessionSearch->SearchResults.Num());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Session search is null"));
+	}
+
+	if (Success && SessionInterface.IsValid())
 	{
 		FSessionResult SessionResult;
-		
-		if(SessionSearch->SearchResults.Num() > 0)
+
+		if (SessionSearch.IsValid() && SessionSearch->SearchResults.Num() > 0)
 		{
 			for (int i = 0; i < SessionSearch->SearchResults.Num(); ++i)
 			{
-				if(MaxPlayers != SessionSearch->SearchResults[i].Session.NumOpenPublicConnections)
+				if (MaxPlayers != SessionSearch->SearchResults[i].Session.NumOpenPublicConnections)
 				{
 					SessionResult.Result = SessionSearch->SearchResults[i];
 					break;
-				}					
+				}
 			}
+
+			FoundSessionDelegate.ExecuteIfBound(true, SessionResult);
 		}
 		else
 		{
-			
-		}		
-	}else
+			FoundSessionDelegate.ExecuteIfBound(false, FSessionResult());
+		}
+	}
+	else
 	{
-		
+		FoundSessionDelegate.ExecuteIfBound(false, FSessionResult());
 	}
 }
 
