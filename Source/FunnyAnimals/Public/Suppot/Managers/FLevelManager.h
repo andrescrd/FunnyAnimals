@@ -17,19 +17,29 @@ class FUNNYANIMALS_API AFLevelManager : public AInfo
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FLevelConfig CurrentLevel;
+	FLevelConfig CurrentGameplayLevel;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FLevelConfig> Levels;
+	FName LobbyMapName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName MainMenuMapName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FLevelConfig> GameplayLevels;
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void LoadLevel(class UObject *context, FName LevelNameToLoad);
+	void SetGameplayLevels(const TArray<FLevelConfig> NewLevels);
 	UFUNCTION(BlueprintCallable)
-	void SetLevels(TArray<FLevelConfig> NewLevels);
+	TArray<FLevelConfig> GetGameplayLevels() const;
 	UFUNCTION(BlueprintCallable)
-	TArray<FLevelConfig> GetLevels() const;
+	FLevelConfig GetCurrentGameplayLevel() const;
 	UFUNCTION(BlueprintCallable)
-	FLevelConfig GetCurrentLevel() const;
+	FLevelConfig GetGameplayLevel(const int Index);
 	UFUNCTION(BlueprintCallable)
-	FLevelConfig GetLevel(int Index);
+	void LoadGameplayLevel(class UObject *Context,const FName LevelNameToLoad);
+	
+	UFUNCTION(BlueprintCallable)
+	void LoadLobby() const;
+	UFUNCTION(BlueprintCallable)
+	void LoadMainMenu() const;
 };

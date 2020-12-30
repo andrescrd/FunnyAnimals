@@ -6,38 +6,48 @@
 #include "Engine/World.h"
 #include "Engine/Engine.h"
 
-void AFLevelManager::SetLevels(TArray<FLevelConfig> NewLevels)
+void AFLevelManager::SetGameplayLevels(const TArray<FLevelConfig> NewLevels)
 {
-    Levels = NewLevels;
+    GameplayLevels = NewLevels;
 }
 
-TArray<FLevelConfig> AFLevelManager::GetLevels() const
+TArray<FLevelConfig> AFLevelManager::GetGameplayLevels() const
 {
-    return Levels;
+    return GameplayLevels;
 }
 
-FLevelConfig AFLevelManager::GetCurrentLevel() const
+FLevelConfig AFLevelManager::GetCurrentGameplayLevel() const
 {
-    return CurrentLevel;
+    return CurrentGameplayLevel;
 }
 
-FLevelConfig AFLevelManager::GetLevel(int Index)
+FLevelConfig AFLevelManager::GetGameplayLevel(const int Index)
 {
-    return Levels.IsValidIndex(Index) ? Levels[Index] : FLevelConfig();
+    return GameplayLevels.IsValidIndex(Index) ? GameplayLevels[Index] : FLevelConfig();
 }
 
-void AFLevelManager::LoadLevel(class UObject *context, FName LevelNameToLoad)
+void AFLevelManager::LoadGameplayLevel(class UObject *Context, const FName LevelNameToLoad)
 {
-    for (int i = 0; i < Levels.Num(); i++)
+    for (int i = 0; i < GameplayLevels.Num(); i++)
     {
-        if (Levels[i].LevelName.IsEqual(LevelNameToLoad))
+        if (GameplayLevels[i].MapName.IsEqual(LevelNameToLoad))
         {
-            CurrentLevel = Levels[i];
+            CurrentGameplayLevel = GameplayLevels[i];
             break;
         }
     }
 
-    UWorld *World = GEngine->GetWorldFromContextObjectChecked(context);
+    UWorld *World = GEngine->GetWorldFromContextObjectChecked(Context);
     UE_LOG(LogTemp, Warning, TEXT("Level to load %s"), *LevelNameToLoad.ToString());
     UGameplayStatics::OpenLevel(World, LevelNameToLoad, true);
+}
+
+void AFLevelManager::LoadLobby() const
+{
+    UGameplayStatics::OpenLevel(GetWorld(), LobbyMapName, true, FString("listen"));
+}
+
+void AFLevelManager::LoadMainMenu() const
+{
+    UGameplayStatics::OpenLevel(GetWorld(), MainMenuMapName, true);
 }
