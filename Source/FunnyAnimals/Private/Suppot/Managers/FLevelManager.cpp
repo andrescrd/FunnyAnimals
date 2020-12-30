@@ -42,10 +42,15 @@ void AFLevelManager::LoadGameplayLevel(class UObject *Context, const FName Level
     UGameplayStatics::OpenLevel(World, LevelNameToLoad, true);
 }
 
-void AFLevelManager::LoadLobby(class UObject *Context) const
+void AFLevelManager::LoadLobby(class UObject *Context, const bool EnableLan) const
 {
     UWorld *World = GEngine->GetWorldFromContextObjectChecked(Context);
-    UGameplayStatics::OpenLevel(World, LobbyMapName, true, FString("listen"));
+
+    FString LevelOptions = "listen";
+    if (EnableLan)
+        LevelOptions.Append("?bIsLanMatch=1");
+ 
+    UGameplayStatics::OpenLevel(World, LobbyMapName, true, LevelOptions);
 }
 
 void AFLevelManager::LoadMainMenu(class UObject *Context) const

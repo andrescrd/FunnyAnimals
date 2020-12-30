@@ -39,7 +39,7 @@ public:
 	void LoadGameplayLevel(class UObject *Context,const FName LevelNameToLoad);
 	
 	UFUNCTION(BlueprintCallable)
-	void LoadLobby(class UObject *Context) const;
+	void LoadLobby(class UObject *Context, const bool EnableLan) const;
 	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu(class UObject *Context) const;
 };
