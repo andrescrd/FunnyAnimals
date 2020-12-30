@@ -11,7 +11,7 @@
 #include "FGameInstance.generated.h"
 
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FFoundSessionDelegate, bool, Success, FSessionResult, SessionResult);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FFoundSessionDelegate, bool, Success, int, SessionResultIndex);
 
 UCLASS()
 class FUNNYANIMALS_API UFGameInstance : public UGameInstance
@@ -25,7 +25,7 @@ protected:
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 	FFoundSessionDelegate FoundSessionDelegate;
-	
+
 	// Properties
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int MaxPlayers;
@@ -80,7 +80,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroySession() const;
 	UFUNCTION(BlueprintCallable)
-	void JoinServer(const FSessionResult SessionToJoin) const;
+	void JoinServer(const int SessionToJoinIndex) const;
+	// void JoinServer(const FSessionResult SessionToJoin) const;
 	UFUNCTION(BlueprintCallable)
 	void FindSession(const bool EnableLan, const FFoundSessionDelegate& Callback);
 };

@@ -14,6 +14,7 @@ UFGameInstance::UFGameInstance()
 {
 	PlayerSettingSaveSlot = "PlayerSettingSlot";
 	bCreateSaveGame = false;
+	MaxPlayers = 2;
 }
 
 void UFGameInstance::Init()
@@ -94,9 +95,10 @@ void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan
 		SessionInterface->DestroySession(SESSION_NAME);
 
 	FOnlineSessionSettings SessionSettings;
-	SessionSettings.bIsLANMatch = bEnableLan;
+	SessionSettings.bIsLANMatch = true;
 	SessionSettings.NumPublicConnections = MaxPlayers;
-
+	SessionSettings.bUsesPresence = true;
+	SessionSettings.bShouldAdvertise = true;
 	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 }
 
@@ -108,12 +110,12 @@ void UFGameInstance::DestroySession() const
 	SessionInterface->DestroySession(SESSION_NAME);
 }
 
-void UFGameInstance::JoinServer(const FSessionResult SessionToJoin) const
+void UFGameInstance::JoinServer(const int SessionToJoinIndex) const
 {
-	if (!SessionInterface.IsValid() && SessionToJoin.Result.IsValid())
+	if (!SessionInterface.IsValid() && SessionSearch.IsValid() && SessionSearch->SearchResults.IsValidIndex(SessionToJoinIndex) && SessionSearch->SearchResults[SessionToJoinIndex].IsValid())
 		return;
 
-	SessionInterface->JoinSession(0, SESSION_NAME, SessionToJoin.Result);
+	SessionInterface->JoinSession(0, SESSION_NAME,  SessionSearch->SearchResults[SessionToJoinIndex]);
 }
 
 void UFGameInstance::FindSession(const bool EnableLan, const FFoundSessionDelegate& Callback)
@@ -122,8 +124,8 @@ void UFGameInstance::FindSession(const bool EnableLan, const FFoundSessionDelega
 		return;
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	SessionSearch->MaxSearchResults = 20;
-	SessionSearch->bIsLanQuery = EnableLan;
+	SessionSearch->MaxSearchResults = 200;
+	SessionSearch->bIsLanQuery = true;
 
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	FoundSessionDelegate = Callback;
@@ -155,29 +157,28 @@ void UFGameInstance::OnFindSessionsComplete(bool Success)
 
 	if (Success && SessionInterface.IsValid())
 	{
-		FSessionResult SessionResult;
-
 		if (SessionSearch.IsValid() && SessionSearch->SearchResults.Num() > 0)
 		{
 			for (int i = 0; i < SessionSearch->SearchResults.Num(); ++i)
 			{
 				if (MaxPlayers != SessionSearch->SearchResults[i].Session.NumOpenPublicConnections)
 				{
-					SessionResult.Result = SessionSearch->SearchResults[i];
-					break;
+					int MaxConnection = SessionSearch->SearchResults[i].Session.SessionSettings.NumPublicConnections;
+					FoundSessionDelegate.ExecuteIfBound(true, i);
+					return;
 				}
 			}
 
-			FoundSessionDelegate.ExecuteIfBound(true, SessionResult);
+			FoundSessionDelegate.ExecuteIfBound(false, -1);
 		}
 		else
 		{
-			FoundSessionDelegate.ExecuteIfBound(false, FSessionResult());
+			FoundSessionDelegate.ExecuteIfBound(false, -1);
 		}
 	}
 	else
 	{
-		FoundSessionDelegate.ExecuteIfBound(false, FSessionResult());
+		FoundSessionDelegate.ExecuteIfBound(false, -1);
 	}
 }
 

@@ -44,7 +44,7 @@ void AFLevelManager::LoadGameplayLevel(class UObject *Context, const FName Level
 
 void AFLevelManager::LoadLobby(class UObject *Context, const bool EnableLan) const
 {
-    UWorld *World = GEngine->GetWorldFromContextObjectChecked(Context);
+     UWorld *World = GEngine->GetWorldFromContextObjectChecked(Context);
 
     FString LevelOptions = "listen";
     if (EnableLan)

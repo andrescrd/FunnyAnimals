@@ -43,7 +43,7 @@ struct FSessionResult
 {
 	GENERATED_USTRUCT_BODY()
 
-	class FOnlineSessionSearchResult Result;
+	class FOnlineSessionSearchResult Result;	
 };
 
 

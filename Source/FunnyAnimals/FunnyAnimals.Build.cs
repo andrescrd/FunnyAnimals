@@ -8,7 +8,7 @@ public class FunnyAnimals : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule" ,"UMG"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule" ,"UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
@@ -17,6 +17,7 @@ public class FunnyAnimals : ModuleRules
 		
 		// Uncomment if you are using online features
 		PrivateDependencyModuleNames.Add("OnlineSubsystem");
+		// PrivateDependencyModuleNames.Add("OnlineSubsystemNull");
 		// PrivateDependencyModuleNames.Add("OnlineSubsystemUtils");
 		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 
