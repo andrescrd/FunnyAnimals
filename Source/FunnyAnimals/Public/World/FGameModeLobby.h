@@ -14,7 +14,6 @@ class FUNNYANIMALS_API AFGameModeLobby : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	protected:
-	virtual void PostLogin(APlayerController* NewPlayer) override;
+protected:
 	
 };
