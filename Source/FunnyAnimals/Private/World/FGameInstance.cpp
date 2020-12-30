@@ -1,14 +1,12 @@
 #include "World/FGameInstance.h"
-
 #include "Blueprint/UserWidget.h"
-#include "Engine/DemoNetDriver.h"
 #include "Kismet/GameplayStatics.h"
 #include "Suppot/Managers/FLevelManager.h"
-#include "GameFramework/PlayerController.h"
-#include "UI/FOptionMenuWidget.h"
-// #include "FindSessionsCallbackProxy.h"
-// #include "CreateSessionCallbackProxy.h"
-
+#include "OnlineSubsystem.h"
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "Engine/DemoNetDriver.h"
+#include "Suppot/Managers/FWidgetManager.h"
 
 const static FName SESSION_NAME = "SESSION_UE";
 
@@ -21,37 +19,17 @@ UFGameInstance::UFGameInstance()
 
 void UFGameInstance::Init()
 {
-	// if(IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
-	// {
-	// 	SessionInterface = Subsystem->GetSessionInterface();
-	//
-	// 	if (SessionInterface.IsValid())
-	// 		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UFGameInstance::HandleOnCreateSession);
-	// }
-}
-
-class AFLevelManager* UFGameInstance::GetLevelManager()
-{
-	if (LevelManagerClass && !IsValid(LevelManagerInstance))
-		LevelManagerInstance = NewObject<AFLevelManager>(this, LevelManagerClass, TEXT("LevelManager"));
-
-	return IsValid(LevelManagerInstance) ? LevelManagerInstance : LevelManagerInstance = NewObject<AFLevelManager>(this, FName("LevelManager"));
-}
-
-void UFGameInstance::ChangeWidget(UUserWidget* WidgetWp, const TSubclassOf<UUserWidget> WidgetClass)
-{
-	if (!WidgetClass)
-		return;
-
-	APlayerController* PC = GetPrimaryPlayerController();
-
-	if (!IsValid(WidgetWp))
-		WidgetWp = CreateWidget<UUserWidget>(this, WidgetClass);
-
-	WidgetWp->AddToViewport();
-
-	if (PC)
-		PC->SetShowMouseCursor(true);
+	if(IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
+	{
+		SessionInterface = Subsystem->GetSessionInterface();
+		if (SessionInterface.IsValid())
+		{
+			SessionInterface->OnCreateSessionCompleteDelegates. AddUObject(this, &UFGameInstance::OnCreateSessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates. AddUObject(this, &UFGameInstance::OnDestroySessionComplete);
+			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UFGameInstance::OnFindSessionsComplete);
+			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UFGameInstance::OnJoinSessionsComplete);
+		}
+	}
 }
 
 void UFGameInstance::GameSaveCheck()
@@ -64,69 +42,98 @@ void UFGameInstance::GameSaveCheck()
 		ShowOptionMenu();
 }
 
-void UFGameInstance::ShowMainMenu()
+// *****************
+// Managers
+// *****************
+
+class AFLevelManager* UFGameInstance::GetLevelManager()
 {
-	ChangeWidget(MainMenuWP, MainMenuClass);
+	if (LevelManagerClass && !IsValid(LevelManagerInstance))
+		LevelManagerInstance = NewObject<AFLevelManager>(this, LevelManagerClass, TEXT("LevelManager"));
+
+	return IsValid(LevelManagerInstance) ? LevelManagerInstance : LevelManagerInstance = NewObject<AFLevelManager>(this, FName("LevelManager"));
 }
 
-void UFGameInstance::ShowOptionMenu()
+AFWidgetManager* UFGameInstance::GetWidgetManager()
 {
-	ChangeWidget(OptionMenuWP, OptionMenuClass);
-	if (!bCreateSaveGame)
-		OptionMenuWP->WelcomeMessageVis = ESlateVisibility::Visible;
+	if (WidgetManagerClass && !IsValid(WidgetManagerInstance))
+		WidgetManagerInstance = NewObject<AFWidgetManager>(this, WidgetManagerClass, TEXT("WidgetManager"));
+
+	return IsValid(WidgetManagerInstance) ? WidgetManagerInstance : WidgetManagerInstance = NewObject<AFWidgetManager>(this, FName("WidgetManager"));
 }
 
-void UFGameInstance::ShowHostMenu()
+
+// *****************
+// UI Widgets
+// *****************
+
+void UFGameInstance::ShowOptionMenu() { GetWidgetManager()->ShowOptionMenu(!bCreateSaveGame, GetPrimaryPlayerController()); }
+
+void UFGameInstance::ShowServerMenu() { GetWidgetManager()->ShowServerMenu(GetPrimaryPlayerController()); }
+
+void UFGameInstance::ShowHostMenu() { GetWidgetManager()->ShowHostMenu(GetPrimaryPlayerController()); }
+
+void UFGameInstance::ShowMainMenu() { GetWidgetManager()->ShowMainMenu(GetPrimaryPlayerController()); }
+
+void UFGameInstance::ShowLoadingScreen() { GetWidgetManager()->ShowLoadingScreen(GetPrimaryPlayerController()); }
+
+// *****************
+// Online Subsystem
+// *****************
+
+void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan, const FText NewServerName)
 {
-	ChangeWidget(HostMenuWP, HostMenuClass);
+	if (!SessionInterface.IsValid())
+		return;
+	
+	MaxPlayers = NumberOfPlayers;
+	ServerName = NewServerName;
+	
+	ShowLoadingScreen();
+	
+	FOnlineSessionSettings SessionSettings;	
+	SessionSettings.bIsLANMatch = EnableLan;	
+	SessionSettings.NumPublicConnections = MaxPlayers;
+	
+	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 }
 
-void UFGameInstance::ShowServerMenu()
+void UFGameInstance::DestroySession()
 {
-	if (!ServerMenuClass)
+	if (!SessionInterface.IsValid())
 		return;
 
-	ServerMenuWP = CreateWidget<UUserWidget>(this, ServerMenuClass);
-	ServerMenuWP->AddToViewport();
+	SessionInterface->DestroySession(SESSION_NAME);	
 }
 
-void UFGameInstance::ShowLoadingScreen()
+void UFGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
-	ChangeWidget(LoadingWP, LoadingScreenClass);
+	UE_LOG(LogTemp, Warning, TEXT("Session with name %s has been created"), *SessionName.ToString());
+
+	if (Success)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(),LobbyMapName,true, FString("listen"));
+	}	
+	else
+	{
+		//TODO: do something when session failed
+		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
+	}
 }
 
-// void UFGameInstance::LaunchLobby(const int NumberOfPlayers, const bool EnableLan, const FText& NewServerName)
-// {
-// 	MaxPlayers = NumberOfPlayers;
-// 	ServerName = NewServerName;
-//
-// 	ShowLoadingScreen();
-// 	//
-// 	// if (FNamedOnlineSession* Exist = SessionInterface->GetNamedSession(SESSION_NAME))
-// 	// 	SessionInterface->DestroySession(SESSION_NAME);
-//
-// 	const auto SessionSettings = MakeShareable(new FOnlineSessionSettings());	
-// 	SessionSettings.Object->bIsLANMatch = EnableLan;	
-// 	 SessionSettings.Object->NumPublicConnections = MaxPlayers;
-//
-// 	SessionInterface->CreateSession(0, SESSION_NAME, *SessionSettings.Object);
-// }
-//
-// void UFGameInstance::HandleOnCreateSession(FName SessionName, bool Success)
-// {
-// 	if (Success)
-// 	{
-// 		UGameplayStatics::OpenLevel(GetWorld(),LobbyMapName,true, FString("listen"));
-// 	}	
-// 	else
-// 	{
-// 		//TODO: do something when session failed
-//
-// #if WITH_EDITOR
-// 		UE_LOG(LogTemp, Warning, TEXT("Cannot create session"));
-// #endif
-// 	}
-// }
+void UFGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Session with name %s has been destroyed"), *SessionName.ToString());
+}
+
+void UFGameInstance::OnFindSessionsComplete(bool Success)
+{
+}
+
+void UFGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type SessionType)
+{
+	
+}
 
 void UFGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

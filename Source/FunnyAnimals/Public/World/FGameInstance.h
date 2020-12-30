@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-// #include "OnlineSubsystem.h"
-// #include "FindSessionsCallbackProxy.h"
+#include "OnlineSubsystem.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "FGameInstance.generated.h"
 
 /**
@@ -20,25 +20,25 @@ public:
 	UFGameInstance();
 
 protected:
-	// IOnlineSessionPtr SessionInterface;
-
-	class UUserWidget* MainMenuWP;
-	class UFOptionMenuWidget* OptionMenuWP;
-	class UUserWidget* HostMenuWP;
-	class UUserWidget* ServerMenuWP;
-	class UUserWidget* LoadingWP;
+	IOnlineSessionPtr SessionInterface;
 
 	// Properties
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int MaxPlayers;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FText ServerName;
-
+	
 	// Managers
 	UPROPERTY(Transient)
 	class AFLevelManager* LevelManagerInstance;
+	UPROPERTY(Transient)
+	class AFWidgetManager* WidgetManagerInstance;
+	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AFLevelManager> LevelManagerClass;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AFWidgetManager> WidgetManagerClass;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString PlayerSettingSaveSlot;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
@@ -46,26 +46,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName LobbyMapName;
 
-	// Widgets
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
-	TSubclassOf<class UUserWidget> MainMenuClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
-	TSubclassOf<class UUserWidget> OptionMenuClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
-	TSubclassOf<class UUserWidget> HostMenuClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
-	TSubclassOf<class UUserWidget> ServerMenuClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Widgets)
-	TSubclassOf<class UUserWidget> LoadingScreenClass;
-
-	void ChangeWidget(class UUserWidget* WidgetWp, const TSubclassOf<class UUserWidget> WidgetClass);
-	// void HandleOnCreateSession(FName SessionName, bool Success);
-
-	virtual void Init() override;
+	void OnCreateSessionComplete(FName SessionName, bool Success);
+	void OnDestroySessionComplete(FName SessionName, bool Success);
+	void OnFindSessionsComplete(bool Success);
+	void OnJoinSessionsComplete( FName SessionName, EOnJoinSessionCompleteResult::Type SessionType);
 	
+	virtual void Init() override;	
 public:
 	UFUNCTION(BlueprintCallable)
 	class AFLevelManager* GetLevelManager();
+	UFUNCTION(BlueprintCallable)
+	class AFWidgetManager* GetWidgetManager();
 
 	UFUNCTION(BlueprintCallable)
 	void GameSaveCheck();
@@ -80,9 +71,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowLoadingScreen();
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void LaunchLobby(int NumberOfPlayers, bool EnableLan, const FText& NewServerName);
-	//  UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	// void JoinServer(const FBlueprintSessionResult& SessionToJoin);
-	
+	UFUNCTION(BlueprintCallable)
+	void LaunchLobby(int NumberOfPlayers, bool EnableLan, const FText NewServerName);
+	UFUNCTION(BlueprintCallable)
+	void DestroySession();
+	// UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	// void JoinServer(const FBlueprintSessionResult& SessionToJoin);	
 };
