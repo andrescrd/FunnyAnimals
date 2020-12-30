@@ -67,15 +67,15 @@ AFWidgetManager* UFGameInstance::GetWidgetManager()
 // UI Widgets
 // *****************
 
-void UFGameInstance::ShowOptionMenu() { GetWidgetManager()->ShowOptionMenu(!bCreateSaveGame, GetPrimaryPlayerController()); }
+void UFGameInstance::ShowOptionMenu() { GetWidgetManager()->ShowOptionMenu(!bCreateSaveGame, GetFirstLocalPlayerController()); }
 
-void UFGameInstance::ShowServerMenu() { GetWidgetManager()->ShowServerMenu(GetPrimaryPlayerController()); }
+void UFGameInstance::ShowServerMenu() { GetWidgetManager()->ShowServerMenu(GetFirstLocalPlayerController()); }
 
-void UFGameInstance::ShowHostMenu() { GetWidgetManager()->ShowHostMenu(GetPrimaryPlayerController()); }
+void UFGameInstance::ShowHostMenu() { GetWidgetManager()->ShowHostMenu(GetFirstLocalPlayerController()); }
 
-void UFGameInstance::ShowMainMenu() { GetWidgetManager()->ShowMainMenu(GetPrimaryPlayerController()); }
+void UFGameInstance::ShowMainMenu() { GetWidgetManager()->ShowMainMenu(GetFirstLocalPlayerController()); }
 
-void UFGameInstance::ShowLoadingScreen() { GetWidgetManager()->ShowLoadingScreen(GetPrimaryPlayerController()); }
+void UFGameInstance::ShowLoadingScreen() { GetWidgetManager()->ShowLoadingScreen(GetFirstLocalPlayerController()); }
 
 // *****************
 // Online Subsystem
