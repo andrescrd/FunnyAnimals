@@ -10,6 +10,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/FBird.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "World/FGameModeSurvive.h"
 
 AFWorm::AFWorm()
 {
@@ -83,6 +84,9 @@ float AFWorm::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 	if(AAIController* AI = Cast<AAIController>(GetController()))
 		AI->GetBrainComponent()->StopLogic(TEXT("EndMovement"));
 	
+	if(AFGameModeSurvive* GM = GetWorld()->GetAuthGameMode<AFGameModeSurvive>())
+		GM->UpdateObjectiveActors(-1);
+	
 	SetLifeSpan(2.f);
 	return DamageAmount;
 }
@@ -96,6 +100,7 @@ void AFWorm::PrepareToDestroy(const FVector EndLocation)
 	AAIController* AI = Cast<AAIController>(GetController());
 	AI->GetBrainComponent()->StopLogic(TEXT("EndMovement"));
 	AI->MoveToLocation(EndLocation, 0, false);
+	
 	SetLifeSpan(3.f);
 }
 
