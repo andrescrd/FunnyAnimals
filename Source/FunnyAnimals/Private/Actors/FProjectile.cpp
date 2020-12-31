@@ -2,7 +2,6 @@
 
 
 #include "Actors/FProjectile.h"
-#include "DrawDebugHelpers.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
