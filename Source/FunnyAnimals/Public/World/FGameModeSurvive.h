@@ -17,7 +17,7 @@ public:
 
 protected:
 	FTimerHandle Counter_TimerHandle;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EGameState CurrentGameState;	
 
@@ -25,11 +25,13 @@ protected:
 	void HandleGameState(const EGameState NewGameState);
 
 public:
-	virtual void BeginPlay() override;	
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	// State Game
 	EGameState GetCurrentGameState() const;
 	void SetGameState(const EGameState NewGameState);
+	void UpdateObjectiveActors(const int DeltaActors);
 
 	void Preparing();
 	void Playing();

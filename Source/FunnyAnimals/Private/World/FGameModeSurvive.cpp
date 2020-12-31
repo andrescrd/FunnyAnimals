@@ -16,7 +16,10 @@ AFGameModeSurvive::AFGameModeSurvive()
     CurrentGameState = EGameState::UNKNOW;
     GameStateClass = AFGameStateSurvive::StaticClass();
     PlayerControllerClass = AFPlayerControllerGameplay::StaticClass();
-    PlayerStateClass = AFPlayerState::StaticClass();    
+    PlayerStateClass = AFPlayerState::StaticClass();
+
+    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.TickInterval = 1.f;
 }
 
 void AFGameModeSurvive::BeginPlay()
@@ -25,10 +28,12 @@ void AFGameModeSurvive::BeginPlay()
     SetGameState(EGameState::PREPARING);
 }
 
-EGameState AFGameModeSurvive::GetCurrentGameState() const
+void AFGameModeSurvive::Tick(float DeltaSeconds)
 {
-    return CurrentGameState;
+    Super::Tick(DeltaSeconds);    
 }
+
+EGameState AFGameModeSurvive::GetCurrentGameState() const { return CurrentGameState; }
 
 void AFGameModeSurvive::SetGameState(const EGameState NewGameState)
 {
@@ -48,6 +53,8 @@ void AFGameModeSurvive::Preparing()
     if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
         GS->MulticastOnPreparing();
 
+    UpdateObjectiveActors(LM->GetGameplayLevel(0).MaxItemToSpawn);
+    
     TArray<AActor *> Spawners;
     UGameplayStatics::GetAllActorsOfClass(this, AFSpawner::StaticClass(), Spawners);
 
@@ -66,7 +73,7 @@ void AFGameModeSurvive::Preparing()
         AFLauncher* Launcher = Cast<AFLauncher>(Launchers[i]);
         if(!Launcher->IsAutoActivate())
             Launcher->Activate();        
-    }
+    } 
     
     FTimerHandle TimerHandle;
     GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeSurvive::SetGameState, EGameState::PLAYING), 1.f, false);
@@ -92,6 +99,15 @@ void AFGameModeSurvive::Complete() const
         GS->MulticastOnComplete(nullptr);
         GS->MulticastPlayerWinner();
     }
+}
+
+void AFGameModeSurvive::UpdateObjectiveActors(const int DeltaActors)
+{
+    AFGameStateSurvive* GS = GetGameState<AFGameStateSurvive>();
+    GS->UpdateObjectiveActors(DeltaActors);
+
+    if(GS->GetMaxObjectiveActors() <= 0)
+        SetGameState(EGameState::GAME_OVER);
 }
 
 void AFGameModeSurvive::StartCounter()
