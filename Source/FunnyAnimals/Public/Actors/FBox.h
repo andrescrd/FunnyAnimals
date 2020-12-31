@@ -13,5 +13,11 @@ UCLASS()
 class FUNNYANIMALS_API AFBox : public AFProjectile
 {
 	GENERATED_BODY()
-	
+
+public:
+	AFBox();
+
+protected:
+public:
+	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 };
