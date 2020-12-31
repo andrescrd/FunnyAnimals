@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "FProjectile.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class FUNNYANIMALS_API AFProjectile : public AActor
 {
 	GENERATED_BODY()
@@ -16,8 +16,6 @@ public:
 	AFProjectile();
 
 protected:
-	FTimerHandle TimerHandle_ExplodeCounter;
-	bool bExplode;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class USceneComponent* Root;
@@ -26,28 +24,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class URadialForceComponent* RadialForceComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UProjectileMovementComponent* ProjectileMovement;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	class USoundWave* ExplodeSoundWave;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	class UParticleSystem* ParticleSystem;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(CalmpMin= "0.5", UIMin="0.5"))
-	float ParticleSystemScale;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int TimeToExplode;
+	class UProjectileMovementComponent* ProjectileMovement;	
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bAutoActivate;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsActive;
+	
 	virtual void BeginPlay() override;
-
-	UFUNCTION()
-	void OnExplode();
 
 public:
 	UFUNCTION(BlueprintCallable)
 	void ActivateMovement(const float Speed, const FVector Velocity) const;
 	UFUNCTION(BlueprintCallable)
-	void ActivateExplode();
+	virtual void Activate();
 };

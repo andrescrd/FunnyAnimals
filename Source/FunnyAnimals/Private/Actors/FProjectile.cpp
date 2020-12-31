@@ -5,7 +5,6 @@
 #include "DrawDebugHelpers.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Engine/World.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Windows/AllowWindowsPlatformTypes.h"
@@ -14,12 +13,12 @@
 AFProjectile::AFProjectile()
 {
 	bAutoActivate = false;
-	bExplode = false;
-	TimeToExplode = 5;
-	ParticleSystemScale = 1;
+	bIsActive = false;
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetSimulatePhysics(true);
+	MeshComp->SetNotifyRigidBodyCollision(true);
+	MeshComp->SetGenerateOverlapEvents(false);
 	RootComponent = MeshComp;
 
 	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("ForceComp"));
@@ -35,8 +34,6 @@ AFProjectile::AFProjectile()
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->bAutoActivate = false;
 
-	PrimaryActorTick.bCanEverTick = false;
-
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }
@@ -47,36 +44,7 @@ void AFProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	if (bAutoActivate)
-		ActivateExplode();
-}
-
-
-void AFProjectile::ActivateExplode()
-{
-	if (bExplode)
-		return;
-	
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle_ExplodeCounter, this, &AFProjectile::OnExplode, TimeToExplode, false);
-}
-
-void AFProjectile::OnExplode()
-{
-	bExplode = true;
-
-	RadialForceComp->FireImpulse();
-	// DrawDebugSphere(GetWorld(), GetActorLocation(), RadialForceComp->Radius, 12, FColor::Red, false, 5.f, 0, 5.f);
-
-	TArray<AActor*> IgnoreActors;
-	IgnoreActors.Add(this);
-	UGameplayStatics::ApplyRadialDamage(this, 10, GetActorLocation(), RadialForceComp->Radius, nullptr, IgnoreActors, this, GetInstigatorController(), true);
-
-	if (ExplodeSoundWave)
-		UGameplayStatics::PlaySoundAtLocation(this, ExplodeSoundWave, GetActorLocation());
-
-	if (ParticleSystem)
-		UGameplayStatics::SpawnEmitterAtLocation(this, ParticleSystem, GetActorLocation(), FRotator::ZeroRotator, FVector(ParticleSystemScale));
-
-	SetLifeSpan(1.f);
+		Activate();
 }
 
 void AFProjectile::ActivateMovement(const float Speed, const FVector Velocity) const
@@ -89,3 +57,5 @@ void AFProjectile::ActivateMovement(const float Speed, const FVector Velocity) c
 	ProjectileMovement->SetVelocityInLocalSpace(Velocity);
 	ProjectileMovement->ToggleActive();
 }
+
+void AFProjectile::Activate() { }
