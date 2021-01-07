@@ -48,7 +48,7 @@ void AFWorm::MoveToLocation(const FVector NewLocation,const bool UpdateVelocity)
 		AI->GetBlackboardComponent()->SetValueAsBool(TEXT("ShouldRun"), true);
 		AI->GetBlackboardComponent()->SetValueAsBool(TEXT("UpdateVelocity"), UpdateVelocity);		
 		
-		DrawDebugSphere(GetWorld(), NewLocation, 100.f, 8, FColor::Green, false, 3, 0, 5);		
+		// DrawDebugSphere(GetWorld(), NewLocation, 100.f, 8, FColor::Green, false, 3, 0, 5);		
 	}
 }
 

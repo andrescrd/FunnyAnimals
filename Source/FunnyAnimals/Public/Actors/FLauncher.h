@@ -36,7 +36,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TSubclassOf<class AFProjectile>> ProjectileClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UMaterialInterface* NewDecalMaterial;
+	TSubclassOf<class AActor> ActorDecal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UCurveFloat* Curve;	
@@ -59,7 +59,7 @@ protected:
 	void OnEQSQueryFinished(const TSharedPtr<FEnvQueryResult> Result);
 
 	UFUNCTION()
-	void OnTimelineHandler(const float Output) const;
+	void OnTimelineHandler(const float Output) const;	
 	
 public:	
 	// Called every frame

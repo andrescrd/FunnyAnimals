@@ -7,7 +7,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/DecalActor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Engine/DemoNetDriver.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -33,7 +33,7 @@ AFLauncher::AFLauncher()
 	PrimaryActorTick.bCanEverTick = false;
 
 	SetReplicates(false);
-	bNetLoadOnClient = false;
+	// bNetLoadOnClient = false;
 }
 
 // Called when the game starts or when spawned
@@ -77,6 +77,7 @@ void AFLauncher::OnTimelineHandler(const float Output) const
 	const FTransform SplineResult = SplineComp->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
 	SpawnerPoint->SetRelativeLocation(SplineResult.GetLocation());
 }
+
 
 void AFLauncher::FindVelocityEQS()
 {
@@ -127,9 +128,9 @@ void AFLauncher::SpawnProjectiles(const FVector EndLocation)
 {
 	if (ProjectileClass.Num() == 0)
 		return;
-	
-	if (NewDecalMaterial)
-		UGameplayStatics::SpawnDecalAtLocation(this,NewDecalMaterial, FVector(16,256,256), EndLocation,FRotator(-90,0,0), 3.f);
+
+	if(ActorDecal)
+		AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ActorDecal,EndLocation, FRotator::ZeroRotator);		
 
 	FVector Velocity;
 	const bool bSuccess = UGameplayStatics::SuggestProjectileVelocity(GetWorld(), Velocity, SpawnerPoint->GetComponentLocation(),
