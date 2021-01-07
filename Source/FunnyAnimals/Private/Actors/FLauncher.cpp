@@ -4,7 +4,9 @@
 #include "Actors/FLauncher.h"
 #include "Actors/FProjectile.h"
 #include "Components/BillboardComponent.h"
+#include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
+#include "Engine/DecalActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -29,6 +31,9 @@ AFLauncher::AFLauncher()
 	OwnTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("OwnTimeline"));
 
 	PrimaryActorTick.bCanEverTick = false;
+
+	SetReplicates(false);
+	bNetLoadOnClient = false;
 }
 
 // Called when the game starts or when spawned
@@ -120,8 +125,11 @@ bool AFLauncher::IsAutoActivate() const { return bAutoActivate; }
 
 void AFLauncher::SpawnProjectiles(const FVector EndLocation)
 {
-	if (ProjectileClass == nullptr)
+	if (ProjectileClass.Num() == 0)
 		return;
+	
+	if (NewDecalMaterial)
+		UGameplayStatics::SpawnDecalAtLocation(this,NewDecalMaterial, FVector(16,256,256), EndLocation,FRotator(-90,0,0), 3.f);
 
 	FVector Velocity;
 	const bool bSuccess = UGameplayStatics::SuggestProjectileVelocity(GetWorld(), Velocity, SpawnerPoint->GetComponentLocation(),
@@ -131,14 +139,16 @@ void AFLauncher::SpawnProjectiles(const FVector EndLocation)
 
 	if (bSuccess)
 	{
-		AFProjectile* NewProjectile = GetWorld()->SpawnActorDeferred<AFProjectile>(ProjectileClass,
-		                                                                           SpawnerPoint->GetComponentTransform(), this, GetInstigator(),
+		const int32 ProjectileIndex = FMath::RandRange(0, ProjectileClass.Num() -1 );
+		AFProjectile* NewProjectile = GetWorld()->SpawnActorDeferred<AFProjectile>(ProjectileClass[ProjectileIndex],
+		                                                                           SpawnerPoint->GetComponentTransform(), GetOwner(), GetInstigator(),
 		                                                                           ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		NewProjectile->ActivateMovement(ProjectileSpeed, Velocity);
 
+		
 		FTransform NewTransform;
 		NewTransform.SetLocation(SpawnerPoint->GetComponentLocation());
-		NewProjectile->FinishSpawning(NewTransform);;
+		NewProjectile->ActivateMovement(ProjectileSpeed, Velocity);
+		NewProjectile->FinishSpawning(NewTransform, true);		
 	}
 	else
 	{

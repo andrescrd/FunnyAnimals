@@ -18,6 +18,7 @@ public:
 	AFBox();
 
 protected:
+	virtual  void Tick(float DeltaSeconds) override;
 public:
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 };

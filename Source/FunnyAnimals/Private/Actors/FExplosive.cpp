@@ -12,6 +12,9 @@ AFExplosive::AFExplosive()
 	TimeToExplode = 5;
 	ParticleSystemScale = 1;
 	PrimaryActorTick.bCanEverTick = false;
+
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 void AFExplosive::Activate()
@@ -42,5 +45,5 @@ void AFExplosive::OnExplode()
 
 void AFExplosive::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Activate();
+		Activate();
 }

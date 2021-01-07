@@ -32,9 +32,6 @@ AFProjectile::AFProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->bAutoActivate = false;
-
-	SetReplicates(true);
-	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -47,7 +44,7 @@ void AFProjectile::BeginPlay()
 }
 
 void AFProjectile::ActivateMovement(const float Speed, const FVector Velocity) const
-{
+{	
 	if (ProjectileMovement->IsActive())
 		return;
 

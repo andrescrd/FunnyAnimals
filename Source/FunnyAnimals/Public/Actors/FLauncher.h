@@ -32,8 +32,12 @@ protected:
 	class USplineComponent* SplineComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UBillboardComponent* SpawnerPoint;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class AFProjectile> ProjectileClass;
+	TArray<TSubclassOf<class AFProjectile>> ProjectileClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UMaterialInterface* NewDecalMaterial;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UCurveFloat* Curve;	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
