@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "Types/FTypes.h"
+
+#include "FGameModeBase.h"
 #include "FGameModeSurvive.generated.h"
 
 UCLASS()
-class FUNNYANIMALS_API AFGameModeSurvive : public AGameModeBase
+class FUNNYANIMALS_API AFGameModeSurvive : public AFGameModeBase
 {
 	GENERATED_BODY()
 
@@ -17,26 +17,17 @@ public:
 
 protected:
 	FTimerHandle Counter_TimerHandle;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EGameState CurrentGameState;	
-
 	void StartCounter();
-	void HandleGameState(const EGameState NewGameState);
 
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
 	// State Game
-	EGameState GetCurrentGameState() const;
-	void SetGameState(const EGameState NewGameState);
 	void UpdateObjectiveActors(const int DeltaActors);
 
-	void Preparing();
-	void Playing();
-	void Complete() const;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnGameStateChange(EGameState NewGameState);
+	virtual void Preparing() override;
+	virtual void Playing() override;
+	virtual void Complete() override;
+	virtual void Finish() override;
 };

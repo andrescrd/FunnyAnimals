@@ -33,19 +33,6 @@ void AFGameModeSurvive::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);    
 }
 
-EGameState AFGameModeSurvive::GetCurrentGameState() const { return CurrentGameState; }
-
-void AFGameModeSurvive::SetGameState(const EGameState NewGameState)
-{
-    if (CurrentGameState == NewGameState)
-        return;
-
-    CurrentGameState = NewGameState;
-    HandleGameState(CurrentGameState);
-
-    OnGameStateChange(CurrentGameState);
-}
-
 void AFGameModeSurvive::Preparing()
 {
     AFLevelManager *LM = UFBlueprintFunctionLibrary::GetLevelManager(this);
@@ -92,7 +79,7 @@ void AFGameModeSurvive::Playing()
     }
 }
 
-void AFGameModeSurvive::Complete() const
+void AFGameModeSurvive::Complete()
 {
     if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
     {
@@ -100,6 +87,8 @@ void AFGameModeSurvive::Complete() const
         GS->MulticastPlayerWinner();
     }
 }
+
+void AFGameModeSurvive::Finish() { Complete(); }
 
 void AFGameModeSurvive::UpdateObjectiveActors(const int DeltaActors)
 {
@@ -123,32 +112,5 @@ void AFGameModeSurvive::StartCounter()
             GetWorldTimerManager().ClearTimer(Counter_TimerHandle);
             SetGameState(EGameState::FINISH);
         }
-    }
-}
-
-void AFGameModeSurvive::HandleGameState(const EGameState NewGameState)
-{
-    switch (NewGameState)
-    {
-    case EGameState::PREPARING:
-    {
-        Preparing();
-    }
-    break;
-
-    case EGameState::PLAYING:
-    {
-        Playing();
-    }
-    break;
-    case EGameState::FINISH:
-    case EGameState::GAME_OVER:
-    {
-        Complete();
-    }
-    break;
-
-    default:
-        break;
     }
 }
