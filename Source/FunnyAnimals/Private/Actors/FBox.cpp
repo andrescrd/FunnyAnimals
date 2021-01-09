@@ -22,9 +22,11 @@ void AFBox::Tick(float DeltaSeconds)
 
 void AFBox::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
+	GEngine->AddOnScreenDebugMessage(1,3.f , FColor::Green, FString::Printf(TEXT("Box hit ")));
+	
 	if(HasAuthority())
 	{
-		if (Other->IsA(AFWorm::StaticClass()) && FVector::DotProduct(HitNormal, FVector::UpVector) > 0.9)
+		if (Other && Other->IsA(AFWorm::StaticClass()) && FVector::DotProduct(HitNormal, FVector::UpVector) > 0.9)
 			UGameplayStatics::ApplyDamage(Other, 10, GetInstigatorController(), this, nullptr);
 
 		SetLifeSpan(3.f);
