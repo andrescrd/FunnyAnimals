@@ -40,9 +40,8 @@ void AFGameModeSurvive::Preparing()
     if (AFGameStateSurvive *GS = GetGameState<AFGameStateSurvive>())
         GS->MulticastOnPreparing();
 
-    UpdateObjectiveActors(LM->GetGameplayLevel(0).MaxItemToSpawn);
-    
-    TArray<AActor *> Spawners;
+    UpdateObjectiveActors(LM->GetGameplayLevel(0).MaxItemToSpawn);    
+   
     UGameplayStatics::GetAllActorsOfClass(this, AFSpawner::StaticClass(), Spawners);
 
     for (int i = 0; i < Spawners.Num(); i++)
@@ -52,7 +51,6 @@ void AFGameModeSurvive::Preparing()
             Spawner->Spawn(LM->GetGameplayLevel(0).MaxItemToSpawn);
     }
 
-    TArray<AActor *> Launchers;
     UGameplayStatics::GetAllActorsOfClass(this, AFLauncher::StaticClass(), Launchers);
 
     for (int i = 0; i < Launchers.Num(); ++i)
@@ -85,6 +83,9 @@ void AFGameModeSurvive::Complete()
     {
         GS->MulticastOnComplete(nullptr);
         GS->MulticastPlayerWinner();
+
+        for (AActor* Launcher : Launchers)
+            Cast<AFLauncher>(Launcher)->Deactivate();
     }
 }
 

@@ -17,6 +17,9 @@ public:
 
 protected:
 	FTimerHandle Counter_TimerHandle;
+	TArray<AActor *> Spawners;
+	TArray<AActor *> Launchers;
+
 	void StartCounter();
 
 public:
