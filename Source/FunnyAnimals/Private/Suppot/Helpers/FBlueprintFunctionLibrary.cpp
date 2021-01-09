@@ -4,8 +4,8 @@
 #include "Engine/DataTable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/GameInstance.h"
-#include "World/FGameInstance.h"
-#include "World/FGameModeSurvive.h"
+#include "World/GameInstance/FGameInstance.h"
+#include "World/GameMode/FGameModeSurvive.h"
 #include "Types/FTypes.h"
 
 FCharacterColor UFBlueprintFunctionLibrary::GetColorFromDataTable(class UDataTable *Table)

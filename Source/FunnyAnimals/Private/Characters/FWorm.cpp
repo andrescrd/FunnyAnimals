@@ -10,7 +10,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/FBird.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "World/FGameModeSurvive.h"
+#include "World/GameMode/FGameModeSurvive.h"
 
 AFWorm::AFWorm()
 {
