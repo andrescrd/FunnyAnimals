@@ -96,9 +96,15 @@ void AFBird::PeckEnd()
 void AFBird::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
 	Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
 	SetColor(1, Color.ColorBase, GetMesh()->GetMaterial(0), GetMesh());
 	SetColor(2, Color.ColorLight, GetMesh()->GetMaterial(0), GetMesh());
 	SetColor(3, Color.ColorDark, GetMesh()->GetMaterial(0), GetMesh());
 }
+
+void AFBird::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AFBird, Color);
+}
+

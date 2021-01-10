@@ -62,7 +62,7 @@ void AFGameModeBase::HandleGameState(const EGameState NewGameState)
 			Finish();
 		}
 		break;
-	case EGameState::GAME_OVER:
+	case EGameState::COMPLETE:
 		{
 			Complete();
 		}

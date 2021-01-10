@@ -59,6 +59,6 @@ enum class EGameState : uint8
 	PREPARING UMETA(DisplayName = "Preparing"),
 	PLAYING UMETA(DisplayName = "Playing"),
 	FINISH UMETA(DisplayName = "Finish"),
-	GAME_OVER UMETA(DisplayName = "GameOver"),
+	COMPLETE UMETA(DisplayName = "Complete"),
 	UNKNOW UMETA(DisplayName = "Unknow")
 };

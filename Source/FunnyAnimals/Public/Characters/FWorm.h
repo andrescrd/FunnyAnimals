@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/FCharacter.h"
+#include "Types/FTypes.h"
+
 #include "FWorm.generated.h"
 
 /**
@@ -23,12 +25,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AFBird* ParentBird;
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly)
+	FCharacterColor ParentBirdColor;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UBehaviorTree* BehaviorTreeAsset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UPawnSensingComponent* SensComp;
-
 
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;

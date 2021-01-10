@@ -37,5 +37,5 @@ public:
 	virtual void Complete() override;
 	virtual void Finish() override;
 
-	void UpdateObjectiveActors(const int DeltaActors);
+	void UpdateObjectiveActors(class APawn* OwnPawn, const int DeltaActors);
 };

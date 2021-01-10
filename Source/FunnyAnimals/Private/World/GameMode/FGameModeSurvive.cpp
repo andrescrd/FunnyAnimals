@@ -78,7 +78,7 @@ void AFGameModeSurvive::UpdateObjectiveActors(const int DeltaActors)
 	GS->UpdateObjectiveActors(DeltaActors);
 
 	if (GS->GetMaxObjectiveActors() <= 0)
-		SetGameState(EGameState::GAME_OVER);
+		SetGameState(EGameState::COMPLETE);
 }
 
 void AFGameModeSurvive::StartCounter()

@@ -42,29 +42,40 @@ void AFGameModeCoop::Preparing()
 	// UpdateObjectiveActors(LM->GetGameplayLevel(0).MaxItemToSpawn);
 
 	SpawnLaunchers();
-	SpawnWorms();
 
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeCoop::SetGameState, EGameState::PLAYING), 1.f, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &AFGameModeCoop::SetGameState, EGameState::PLAYING), 5.f, false);
 }
 
 void AFGameModeCoop::Playing()
 {
 	if (AFGameStateCoop* GS = GetGameState<AFGameStateCoop>())
 		GS->MulticastOnPlaying();
+
+	SpawnWorms();
 }
 
-void AFGameModeCoop::Complete() { }
-void AFGameModeCoop::Finish() { }
-void AFGameModeCoop::StartCounter() { }
-
-void AFGameModeCoop::UpdateObjectiveActors(const int DeltaActors)
+void AFGameModeCoop::Complete()
 {
-	// AFGameStateCoop* GS = GetGameState<AFGameStateCoop>();
-	// GS->UpdateObjectiveActors(DeltaActors);
-	//
-	// if (GS->GetMaxObjectiveActors() <= 0)
-	// 	SetGameState(EGameState::GAME_OVER);
+}
+
+void AFGameModeCoop::Finish()
+{
+}
+
+void AFGameModeCoop::StartCounter()
+{
+}
+
+void AFGameModeCoop::UpdateObjectiveActors(class APawn* OwnPawn, const int DeltaActors)
+{
+	if (AFPlayerState* PS = Cast<AFPlayerState>(OwnPawn->GetPlayerState()))
+	{
+		PS->AddScore(OwnPawn, DeltaActors);
+
+		if (PS->GetScore() <= 0)
+			SetGameState(EGameState::COMPLETE);
+	}
 }
 
 // *****************************
@@ -86,14 +97,14 @@ void AFGameModeCoop::SpawnLaunchers()
 void AFGameModeCoop::SpawnWorms()
 {
 	AFLevelManager* LM = UFBlueprintFunctionLibrary::GetLevelManager(this);
-
 	UGameplayStatics::GetAllActorsOfClass(this, AFSpawner::StaticClass(), Spawners);
+
+	if (AFGameStateCoop* GS = GetGameState<AFGameStateCoop>())
+		GS->MulticastOnPlaying();
 
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
-		AFPlayerControllerGameplay* PC = Cast<AFPlayerControllerGameplay>(It->Get());
-
-		if (PC && PC->IsLocalController())
+		if (AFPlayerControllerGameplay* PC = Cast<AFPlayerControllerGameplay>(It->Get()))
 		{
 			if (APawn* Pawn = PC->GetPawn())
 			{
@@ -106,7 +117,8 @@ void AFGameModeCoop::SpawnWorms()
 						Spawner->Spawn(LM->GetGameplayLevel(0).MaxItemToSpawn / 2, CurrentBird);
 				}
 
-				if(AFPlayerState* PS = Cast<AFPlayerState>(PC->PlayerState))
+
+				if (AFPlayerState* PS = Cast<AFPlayerState>(PC->PlayerState))
 					PS->AddScore(Pawn, LM->GetGameplayLevel(0).MaxItemToSpawn / 2 * Spawners.Num());
 			}
 		}

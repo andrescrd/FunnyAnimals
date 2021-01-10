@@ -20,11 +20,8 @@ public:
 	AFBird();
 	
 protected:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GamePlay)
-	FCharacterColor Color;
-	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePlay)
-	// int ColorIndex;
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = GamePlay)
+	FCharacterColor Color;	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePlay)
 	class UDataTable *DataTable;
 	
