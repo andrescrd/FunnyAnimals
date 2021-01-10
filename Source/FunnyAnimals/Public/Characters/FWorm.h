@@ -20,7 +20,9 @@ public:
 protected:
 	FTimerHandle TimerHandle_HearNooise;
 	bool bIsActive;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class AFBird* ParentBird;	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UBehaviorTree* BehaviorTreeAsset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -40,6 +42,9 @@ protected:
 	
 public:
 	void PrepareToDestroy(const FVector EndLocation);
+
+	void SetParent(class AFBird* OwnParent);
+	class AFBird* GetParent() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool GetIsActive() const;
