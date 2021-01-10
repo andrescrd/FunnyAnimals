@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Actors/FSpawner.h"
 
+
+#include "Characters/FWorm.h"
 #include "Components/BoxComponent.h"
 #include "Engine/Engine.h"
 #include "Kismet/GameplayStatics.h"
@@ -28,7 +30,7 @@ void AFSpawner::BeginPlay()
 		Spawn(MaxSpawn);
 }
 
-void AFSpawner::Spawn(int MaxActorsToSpawn)
+void AFSpawner::Spawn(int MaxActorsToSpawn, class AFBird* ParentBird)
 {
 	if (!HasAuthority())
 		return;
@@ -44,15 +46,24 @@ void AFSpawner::Spawn(int MaxActorsToSpawn)
 		}
 
 		FRotator Rotation = FRotator(0, FMath::RandRange(0.f, 360.f), 0);
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.Owner = this;
-		SpawnParameters.Instigator = GetInstigator();
-		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		
-		AActor* NewItem = GetWorld()->SpawnActor<AActor>(SpawnClass, Location, Rotation, SpawnParameters);
 
-		if (NewItem == nullptr)
+		FTransform Transform = FTransform();
+		Transform.SetLocation(Location);
+		Transform.SetRotation(Rotation.Quaternion());
+
+		AActor* NewItem = GetWorld()->SpawnActorDeferred<AActor>(SpawnClass, Transform, this, GetInstigator(), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		if (NewItem != nullptr)
+		{
+			if (ParentBird != nullptr && NewItem->IsA(AFWorm::StaticClass()))
+				Cast<AFWorm>(NewItem)->SetParent(ParentBird);
+
+			NewItem->FinishSpawning(Transform, true);
+		}
+		else
+		{
 			MaxActorsToSpawn--;
+		}
 	}
 }
 

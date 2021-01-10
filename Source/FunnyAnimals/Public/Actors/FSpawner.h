@@ -33,7 +33,7 @@ protected:
 
 public:    
     UFUNCTION(BlueprintCallable)
-    void Spawn(int MaxActorsToSpawn);
+    void Spawn(int MaxActorsToSpawn, class AFBird* ParentBird = nullptr);
     UFUNCTION(BlueprintCallable)
 	bool IsAutoActive() const;	
 };

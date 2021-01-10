@@ -22,7 +22,6 @@ AFGameModeBase::AFGameModeBase()
 void AFGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	SetGameState(EGameState::PREPARING);
 }
 
 void AFGameModeBase::Tick(float DeltaSeconds)

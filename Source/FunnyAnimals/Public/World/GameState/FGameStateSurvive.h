@@ -15,7 +15,7 @@ class FUNNYANIMALS_API AFGameStateSurvive : public AFGameStateBase
 {
 	GENERATED_BODY()
 
-	public:
+public:
 	AFGameStateSurvive();
 
 protected:
