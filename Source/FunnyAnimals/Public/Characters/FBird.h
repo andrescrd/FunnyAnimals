@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/FCharacter.h"
+#include "Types/FTypes.h"
+
 #include "FBird.generated.h"
 
 /**
@@ -18,6 +20,8 @@ public:
 	AFBird();
 	
 protected:
+	FCharacterColor Color;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	TSubclassOf<class UCameraShakeBase> CameraShake;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Animation)
@@ -25,7 +29,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	class UPawnNoiseEmitterComponent* NoiseEmitterComp;
 	
-	void Peck();	
+	void Peck();
+	
 	UFUNCTION(Server, Reliable, WithValidation)
     void ServerPeck();
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -41,4 +46,7 @@ protected:
 	class UDataTable *DataTable;
 
 	void SetColor(const int8 Index,const FLinearColor Color, class UMaterialInterface *MaterialInt, class USkeletalMeshComponent *SkeletalMesh);
+
+public:
+	FCharacterColor GetColor() const;
 };

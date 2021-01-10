@@ -21,7 +21,7 @@ void AFBird::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const FCharacterColor Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
+	Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
 	SetColor(1, Color.ColorBase, GetMesh()->GetMaterial(0), GetMesh());
 	SetColor(2, Color.ColorLight, GetMesh()->GetMaterial(0), GetMesh());
 	SetColor(3, Color.ColorDark, GetMesh()->GetMaterial(0), GetMesh());
@@ -39,6 +39,8 @@ void AFBird::SetColor(const int8 Index, const FLinearColor Color, class UMateria
 	UMaterialInstanceDynamic* MatInst = SkeletalMesh->CreateAndSetMaterialInstanceDynamicFromMaterial(Index, MaterialInt);
 	MatInst->SetVectorParameterValue("Color", Color);
 }
+
+FCharacterColor AFBird::GetColor() const { return Color; }
 
 void AFBird::Peck()
 {
