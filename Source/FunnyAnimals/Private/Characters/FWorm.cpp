@@ -105,7 +105,4 @@ void AFWorm::PrepareToDestroy(const FVector EndLocation)
 }
 
 void AFWorm::SetParent(AFBird* OwnParent) { ParentBird = OwnParent; }
-
-AFBird* AFWorm::GetParent() const { return ParentBird; }
-
 bool AFWorm::GetIsActive() const { return bIsActive; }

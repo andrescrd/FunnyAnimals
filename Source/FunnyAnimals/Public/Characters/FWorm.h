@@ -22,11 +22,13 @@ protected:
 	bool bIsActive;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class AFBird* ParentBird;	
+	class AFBird* ParentBird;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UBehaviorTree* BehaviorTreeAsset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UPawnSensingComponent* SensComp;
+
 
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
@@ -42,10 +44,8 @@ protected:
 	
 public:
 	void PrepareToDestroy(const FVector EndLocation);
-
 	void SetParent(class AFBird* OwnParent);
-	class AFBird* GetParent() const;
-
+	
 	UFUNCTION(BlueprintCallable)
 	bool GetIsActive() const;
 };

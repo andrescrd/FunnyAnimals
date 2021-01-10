@@ -34,10 +34,10 @@ void AFBird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Peck", IE_Pressed, this, &AFBird::Peck);
 }
 
-void AFBird::SetColor(const int8 Index, const FLinearColor Color, class UMaterialInterface* MaterialInt, class USkeletalMeshComponent* SkeletalMesh)
+void AFBird::SetColor(const int8 Index, const FLinearColor OwnColor, class UMaterialInterface* MaterialInt, class USkeletalMeshComponent* SkeletalMesh)
 {
 	UMaterialInstanceDynamic* MatInst = SkeletalMesh->CreateAndSetMaterialInstanceDynamicFromMaterial(Index, MaterialInt);
-	MatInst->SetVectorParameterValue("Color", Color);
+	MatInst->SetVectorParameterValue("Color", OwnColor);
 }
 
 FCharacterColor AFBird::GetColor() const { return Color; }
