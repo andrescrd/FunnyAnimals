@@ -58,6 +58,15 @@ void AFGameModeCoop::Complete() { }
 void AFGameModeCoop::Finish() { }
 void AFGameModeCoop::StartCounter() { }
 
+void AFGameModeCoop::UpdateObjectiveActors(const int DeltaActors)
+{
+	// AFGameStateCoop* GS = GetGameState<AFGameStateCoop>();
+	// GS->UpdateObjectiveActors(DeltaActors);
+	//
+	// if (GS->GetMaxObjectiveActors() <= 0)
+	// 	SetGameState(EGameState::GAME_OVER);
+}
+
 // *****************************
 // Spawners
 // *****************************
@@ -96,6 +105,9 @@ void AFGameModeCoop::SpawnWorms()
 					if (!Spawner->IsAutoActive())
 						Spawner->Spawn(LM->GetGameplayLevel(0).MaxItemToSpawn / 2, CurrentBird);
 				}
+
+				if(AFPlayerState* PS = Cast<AFPlayerState>(PC->PlayerState))
+					PS->AddScore(Pawn, LM->GetGameplayLevel(0).MaxItemToSpawn / 2 * Spawners.Num());
 			}
 		}
 	}

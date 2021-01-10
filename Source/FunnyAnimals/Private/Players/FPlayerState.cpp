@@ -4,8 +4,8 @@
 #include "Players/FPlayerState.h"
 #include "GameFramework/Pawn.h"
 
-void AFPlayerState::AddScore(class APawn* PawnInstigator, float NewScore)
+void AFPlayerState::AddScore(class APawn* PawnInstigator, const float NewScore)
 {
-	float ResultScore = PawnInstigator->GetPlayerState()->GetScore() + NewScore;
+	const float ResultScore = PawnInstigator->GetPlayerState()->GetScore() + NewScore;
 	PawnInstigator->GetPlayerState()->SetScore(ResultScore);
 }

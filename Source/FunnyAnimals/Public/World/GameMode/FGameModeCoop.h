@@ -22,17 +22,20 @@ public:
 protected:
 	FTimerHandle Counter_TimerHandle;
 	TArray<AActor*> Spawners;
-	TArray<AActor*> Launchers;
-
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
+	TArray<AActor*> Launchers;	
 
 	void StartCounter();
 	void SpawnLaunchers();
 	void SpawnWorms();
+	
 public:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+	
 	virtual void Preparing() override;
 	virtual void Playing() override;
 	virtual void Complete() override;
 	virtual void Finish() override;
+
+	void UpdateObjectiveActors(const int DeltaActors);
 };

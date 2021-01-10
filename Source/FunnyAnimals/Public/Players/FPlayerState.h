@@ -15,5 +15,5 @@ class FUNNYANIMALS_API AFPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
-	void AddScore(class APawn *PawnInstigator, float Score);
+	static void AddScore(class APawn *PawnInstigator, float Score);
 };

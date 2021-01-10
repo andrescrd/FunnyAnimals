@@ -21,6 +21,8 @@ protected:
 	TArray<AActor *> Launchers;
 
 	void StartCounter();
+	void SpawnLaunchers();
+	void SpawnWorms();
 
 public:
 	virtual void BeginPlay() override;
@@ -31,8 +33,5 @@ public:
 	virtual void Complete() override;
 	virtual void Finish() override;
 
-	// State Game
 	void UpdateObjectiveActors(const int DeltaActors);
-	void SpawnLaunchers();
-	void SpawnWorms();
 };
