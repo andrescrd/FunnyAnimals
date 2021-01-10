@@ -17,14 +17,17 @@ class FUNNYANIMALS_API UFBlueprintFunctionLibrary : public UBlueprintFunctionLib
 
 public:
 	UFUNCTION(BlueprintCallable)
-	static FCharacterColor GetColorFromDataTable(class UDataTable *Table);
+	static FCharacterColor GetColorFromDataTable(class UDataTable* Table);
 
 	UFUNCTION(BlueprintCallable)
-	static class AFLevelManager *GetLevelManager(const UObject* WorldContextObject);
+	static FCharacterColor GetColorFromDataTableByIndex(class UDataTable* Table, int RowIndex);
 
 	UFUNCTION(BlueprintCallable)
-	static class UFGameInstance *GetOwnGameInstance(const UObject* WorldContextObject);
+	static class AFLevelManager* GetLevelManager(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable)
-	static class AFGameModeSurvive *GetOwnGameMode(const UObject* WorldContextObject);
+	static class UFGameInstance* GetOwnGameInstance(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable)
+	static class AFGameModeSurvive* GetOwnGameMode(const UObject* WorldContextObject);
 };

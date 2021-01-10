@@ -20,7 +20,13 @@ public:
 	AFBird();
 	
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GamePlay)
 	FCharacterColor Color;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePlay)
+	// int ColorIndex;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePlay)
+	class UDataTable *DataTable;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	TSubclassOf<class UCameraShakeBase> CameraShake;
@@ -38,12 +44,10 @@ protected:
 	
 	UFUNCTION()
     void PeckEnd();
-	
-	virtual void BeginPlay() override;
-	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePlay)
-	class UDataTable *DataTable;
+	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
+	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;	
 
 	void SetColor(const int8 Index,const FLinearColor OwnColor, class UMaterialInterface *MaterialInt, class USkeletalMeshComponent *SkeletalMesh);
 

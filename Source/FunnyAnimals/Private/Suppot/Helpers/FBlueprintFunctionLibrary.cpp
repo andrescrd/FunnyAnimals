@@ -16,8 +16,18 @@ FCharacterColor UFBlueprintFunctionLibrary::GetColorFromDataTable(class UDataTab
 		return Color;
 
 	const int RowCount = Table->GetRowNames().Num();
-	int RowIndex = FMath::RandRange(0, RowCount - 1);
+	const int RowIndex = FMath::RandRange(0, RowCount - 1);
 
+	Color = *Table->FindRow<FCharacterColor>(Table->GetRowNames()[RowIndex], "");
+	return Color;
+}
+
+FCharacterColor UFBlueprintFunctionLibrary::GetColorFromDataTableByIndex(class UDataTable *Table, const int RowIndex)
+{
+	FCharacterColor Color;
+
+	if (!Table)
+		return Color;
 	Color = *Table->FindRow<FCharacterColor>(Table->GetRowNames()[RowIndex], "");
 	return Color;
 }

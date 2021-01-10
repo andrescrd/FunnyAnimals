@@ -19,12 +19,7 @@ AFBird::AFBird()
 
 void AFBird::BeginPlay()
 {
-	Super::BeginPlay();
-
-	Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
-	SetColor(1, Color.ColorBase, GetMesh()->GetMaterial(0), GetMesh());
-	SetColor(2, Color.ColorLight, GetMesh()->GetMaterial(0), GetMesh());
-	SetColor(3, Color.ColorDark, GetMesh()->GetMaterial(0), GetMesh());
+	Super::BeginPlay();	
 }
 
 void AFBird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -96,4 +91,14 @@ void AFBird::PeckEnd()
 {
 	ServerToggleMovement(EMovementMode::MOVE_Walking);
 	GetWorld()->GetTimerManager().ClearTimer(MontageEnd_TimerHandle);
+}
+
+void AFBird::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	Color = UFBlueprintFunctionLibrary::GetColorFromDataTable(DataTable);
+	SetColor(1, Color.ColorBase, GetMesh()->GetMaterial(0), GetMesh());
+	SetColor(2, Color.ColorLight, GetMesh()->GetMaterial(0), GetMesh());
+	SetColor(3, Color.ColorDark, GetMesh()->GetMaterial(0), GetMesh());
 }
