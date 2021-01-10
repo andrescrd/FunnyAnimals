@@ -25,15 +25,14 @@ protected:
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-	void SpawnLaunchers();
-	void SpawnWorms();
-	void SpawnWorms();
-
-	// State Game
-	void UpdateObjectiveActors(const int DeltaActors);
 
 	virtual void Preparing() override;
 	virtual void Playing() override;
 	virtual void Complete() override;
 	virtual void Finish() override;
+
+	// State Game
+	void UpdateObjectiveActors(const int DeltaActors);
+	void SpawnLaunchers();
+	void SpawnWorms();
 };
